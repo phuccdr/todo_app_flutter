@@ -26,11 +26,14 @@ class TextInput extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextField(
+          autofocus: true,
           onChanged: onChanged,
           style: AppTextStyle.bodyMedium.copyWith(
             color: isValid ? textFocusColor : textUnfocusColor,
           ),
           decoration: InputDecoration(
+            enabledBorder: InputBorder.none,
+            border: InputBorder.none,
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: AppColors.border, width: 1),
               borderRadius: BorderRadius.circular(4),
@@ -45,7 +48,7 @@ class TextInput extends StatelessWidget {
         if (isValid && errorText.isNotEmpty) ...{
           Text(
             errorText,
-            style: AppTextStyle.smallBody.copyWith(color: AppColors.error),
+            style: AppTextStyle.bodySmall.copyWith(color: AppColors.error),
           ),
         },
       ],

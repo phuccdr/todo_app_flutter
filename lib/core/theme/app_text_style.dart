@@ -36,10 +36,20 @@ class AppTextStyle {
     color: AppColors.textTitle,
   );
 
-  static const TextStyle smallBody = TextStyle(
+  static const TextStyle bodySmall = TextStyle(
     fontWeight: FontWeight.w400,
     fontSize: 12,
     color: AppColors.textPrimary,
+  );
+  static const TextStyle bodySmallBold = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w700,
+    color: AppColors.textPrimary,
+  );
+  static const TextStyle labelSmall = TextStyle(
+    fontSize: 10,
+    fontWeight: FontWeight.w400,
+    color: AppColors.border,
   );
 
   static const hint = TextStyle(

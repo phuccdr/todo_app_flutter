@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:todoapp/core/theme/app_text_style.dart';
+import 'package:todoapp/core/utils/validator/name_validator.dart';
+import 'package:todoapp/core/utils/validator/password_validator.dart';
 import 'package:todoapp/presentation/cubit/login/login_cubit.dart';
 import 'package:todoapp/presentation/cubit/login/login_state.dart';
 import 'package:todoapp/presentation/widget/button/button_submit.dart';
@@ -69,15 +71,16 @@ class _LoginView extends StatelessWidget {
   }
 
   Widget _buildPasswordTextField() {
-    return BlocBuilder<LoginCubit, LoginState>(
-      buildWhen: (previous, current) =>
-          previous.passwordValidator != current.passwordValidator,
+    return BlocSelector<LoginCubit, LoginState, PasswordValidator>(
+      selector: (LoginState state) {
+        return state.passwordValidator;
+      },
       builder: (context, state) {
         return PasswordTextInput(
           onChanged: (value) {
             context.read<LoginCubit>().onPasswordChange(value);
           },
-          isValid: state.passwordValidator.isValid,
+          isValid: state.isValid,
           title: 'Password',
         );
       },
@@ -85,15 +88,16 @@ class _LoginView extends StatelessWidget {
   }
 
   Widget _buildUserNameTextField() {
-    return BlocBuilder<LoginCubit, LoginState>(
-      buildWhen: (previous, current) =>
-          previous.nameValidator != current.nameValidator,
+    return BlocSelector<LoginCubit, LoginState, NameValidator>(
+      selector: (LoginState state) {
+        return state.nameValidator;
+      },
       builder: (context, state) {
         return UserNameTextInput(
           onChanged: (value) {
             context.read<LoginCubit>().onUserNameChange(value);
           },
-          isValid: state.nameValidator.isValid,
+          isValid: state.isValid,
         );
       },
     );
@@ -102,16 +106,19 @@ class _LoginView extends StatelessWidget {
   void onRegisterClick() {}
 
   Widget _buildButtonSubmit() {
-    return BlocBuilder<LoginCubit, LoginState>(
+    return BlocSelector<LoginCubit, LoginState, bool>(
       builder: (context, state) {
         return ButtonSubmit(
           text: 'Login',
-          onSubmit: state.isValid
+          onSubmit: state
               ? () {
                   context.read<LoginCubit>().onLogin();
                 }
               : null,
         );
+      },
+      selector: (LoginState state) {
+        return state.isValid;
       },
     );
   }

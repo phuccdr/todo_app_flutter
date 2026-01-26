@@ -42,8 +42,8 @@ class AppTheme {
         ),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        selectedLabelStyle: AppTextStyle.smallBody,
-        unselectedLabelStyle: AppTextStyle.smallBody,
+        selectedLabelStyle: AppTextStyle.bodySmall,
+        unselectedLabelStyle: AppTextStyle.bodySmall,
       ),
     );
   }

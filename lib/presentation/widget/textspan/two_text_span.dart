@@ -14,9 +14,9 @@ class TwoTextSpan extends StatelessWidget {
   const TwoTextSpan({
     super.key,
     required this.firstText,
-    this.firstTextStyle = AppTextStyle.smallBody,
+    this.firstTextStyle = AppTextStyle.bodySmall,
     required this.secondText,
-    this.secondTextStyle = AppTextStyle.smallBody,
+    this.secondTextStyle = AppTextStyle.bodySmall,
     this.onFirstTextClick,
     this.onSecondTextClick,
   });

@@ -5,12 +5,20 @@ class BottomNavigationItem extends StatelessWidget {
   final VoidCallback? onPresses;
   final String label;
   final Widget icon;
+  final int index;
+  final int? currentIndex;
   const BottomNavigationItem({
     super.key,
     required this.label,
     required this.icon,
     this.onPresses,
+    required this.index,
+    this.currentIndex,
   });
+
+  bool isSelected() {
+    return index == currentIndex;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +28,7 @@ class BottomNavigationItem extends StatelessWidget {
         children: [
           icon,
           const SizedBox(height: 8),
-          Text(label, style: AppTextStyle.smallBody),
+          Text(label, style: AppTextStyle.bodySmall),
         ],
       ),
     );

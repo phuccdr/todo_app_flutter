@@ -1,45 +1,81 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todoapp/core/theme/app_colors.dart';
 import 'package:todoapp/core/theme/app_text_style.dart';
-import 'package:todoapp/presentation/pages/home/bottom_navigaton_item.dart';
+import 'package:todoapp/presentation/cubit/navigation/navigation_cubit.dart';
+import 'package:todoapp/presentation/cubit/task/add_task/add_task_cubit.dart';
+import 'package:todoapp/presentation/pages/home/bottom_nav_bar/home_bottom_nav_bar.dart';
+import 'package:todoapp/presentation/pages/home/bottom_sheet/add_task_bottom_sheet.dart';
+import 'package:todoapp/presentation/pages/home/calendar/calendar_tab_view.dart';
+import 'package:todoapp/presentation/pages/home/focus/focus_tab_view.dart';
+import 'package:todoapp/presentation/pages/home/home_tab/home_tab_view.dart';
+import 'package:todoapp/presentation/pages/home/profile/profile_tab_view.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => NavigationCubit(),
+      child: const HomeView(),
+    );
+  }
+}
+
+class HomeView extends StatelessWidget {
+  const HomeView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
-      body: _buildBody(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // add not
+      body: BlocBuilder<NavigationCubit, int>(
+        builder: (context, state) {
+          return IndexedStack(
+            index: state,
+            children: const [
+              HomeTabView(),
+              CalendarTabView(),
+              FocusTabView(),
+              ProfileTabView(),
+            ],
+          );
         },
-        backgroundColor: AppColors.button,
-        shape: const CircleBorder(),
-        child: const Icon(Icons.add, size: 32, color: Colors.white),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: _buildBottomNaigationBar(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _showAddTaskBottomSheet(context);
+        },
+        backgroundColor: AppColors.primary,
+        shape: CircleBorder(),
+        child: Icon(Icons.add, size: 32, color: AppColors.white),
+      ),
+      bottomNavigationBar: HomeBottomNavBar(),
     );
   }
 
-  PreferredSizeWidget? _buildAppBar() {
+  PreferredSizeWidget _buildAppBar() {
     return AppBar(
       leading: Padding(
-        padding: EdgeInsets.only(left: 24),
-        child: IconButton(onPressed: () {}, icon: Icon(Icons.filter_list)),
+        padding: const EdgeInsets.only(left: 24),
+        child: IconButton(
+          onPressed: () {},
+          icon: const Icon(Icons.filter_list),
+        ),
       ),
-      title: Text('Index', style: AppTextStyle.titleMedium),
+      title: BlocBuilder<NavigationCubit, int>(
+        builder: (context, index) {
+          return Text(_getTitle(index), style: AppTextStyle.titleMedium);
+        },
+      ),
       centerTitle: true,
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 12),
           child: ClipOval(
-            child: FadeInImage.assetNetwork(
-              placeholder: 'assets/images/ic_placeholder_avatar.png',
-              image:
-                  'https://assets.editorial.aetnd.com/uploads/2016/11/donald-trump-gettyimages-687193180.jpg',
+            child: Image.network(
+              'https://i.pinimg.com/originals/27/37/df/2737df777c77ec625810d903d2ee98e1.jpg',
               width: 42,
               height: 42,
               fit: BoxFit.cover,
@@ -50,51 +86,35 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget? _buildBody() {
-    return null;
+  String _getTitle(int index) {
+    switch (index) {
+      case 0:
+        return 'Home';
+      case 1:
+        return 'Calendar';
+      case 3:
+        return 'Focus';
+      case 4:
+        return 'Profile';
+      default:
+        return 'Todo App';
+    }
   }
 
-  Widget? _buildBottomNaigationBar() {
-    return BottomAppBar(
-      color: AppColors.bottomAppBar,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          BottomNavigationItem(
-            icon: SvgPicture.asset(
-              'assets/images/ic_home.svg',
-              width: 24,
-              height: 24,
-            ),
-            label: 'Home',
-          ),
-          BottomNavigationItem(
-            icon: SvgPicture.asset(
-              'assets/images/ic_calendar.svg',
-              width: 24,
-              height: 24,
-            ),
-            label: 'Calendar',
-          ),
-          const SizedBox(width: 24),
-          BottomNavigationItem(
-            icon: SvgPicture.asset(
-              'assets/images/ic_focus.svg',
-              width: 24,
-              height: 24,
-            ),
-            label: 'Focus',
-          ),
-          BottomNavigationItem(
-            icon: SvgPicture.asset(
-              'assets/images/ic_profile.svg',
-              width: 24,
-              height: 24,
-            ),
-            label: 'Profile',
-          ),
-        ],
+  void _showAddTaskBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.bottomAppBar,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
+      builder: (_) {
+        return BlocProvider(
+          create: (_) => AddTaskCubit(),
+          child: const AddTaskBottomSheet(),
+        );
+      },
     );
   }
 }
