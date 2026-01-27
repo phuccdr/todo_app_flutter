@@ -19,6 +19,12 @@ class AppTextStyle {
     color: AppColors.textPrimary,
   );
 
+  static const titleSmallBold = TextStyle(
+    fontWeight: FontWeight.w700,
+    fontSize: 16,
+    color: AppColors.textPrimary,
+  );
+
   static const TextStyle titleMedium = TextStyle(
     fontWeight: FontWeight.w400,
     fontSize: 20,
@@ -30,6 +36,7 @@ class AppTextStyle {
     fontSize: 16,
     color: AppColors.textPrimary,
   );
+
   static const TextStyle bodyMedium = TextStyle(
     fontWeight: FontWeight.w400,
     fontSize: 18,
@@ -56,5 +63,10 @@ class AppTextStyle {
     fontWeight: FontWeight.w400,
     color: AppColors.textHint,
     fontSize: 16,
+  );
+  static const labelMedium = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
+    color: AppColors.textPrimary,
   );
 }

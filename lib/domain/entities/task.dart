@@ -4,11 +4,12 @@ import 'package:todoapp/domain/entities/priority.dart';
 class Task {
   final String id;
   final String title;
-  final String description;
+  final String? description;
   final DateTime? taskTime;
   final Category? category;
   final Priority? priority;
   final bool isCompleted;
+  final DateTime? createAt;
 
   const Task({
     this.id = '',
@@ -18,6 +19,7 @@ class Task {
     this.category,
     this.priority = Priority.one,
     this.isCompleted = false,
+    this.createAt,
   });
 
   Task copyWith({

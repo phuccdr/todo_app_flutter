@@ -2,14 +2,16 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:todoapp/core/constants/constant.dart';
+import 'package:todoapp/core/database/app_database.dart';
 import 'package:todoapp/core/di/injection.config.dart';
+import 'package:todoapp/data/datasource/local/dao/category_dao.dart';
 
 final GetIt getIt = GetIt.instance;
 @InjectableInit()
 void configureDependencies() => getIt.init();
 
 @module
-abstract class NetworkModule {
+abstract class AppModule {
   @lazySingleton
   Dio get dio =>
       Dio(
@@ -31,4 +33,9 @@ abstract class NetworkModule {
             error: true,
           ),
         );
+
+  @lazySingleton
+  AppDatabase get database => AppDatabase();
+  @lazySingleton
+  CategoryDao categoryDao(AppDatabase db) => CategoryDao(db);
 }

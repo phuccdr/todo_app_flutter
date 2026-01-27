@@ -1,8 +1,8 @@
 class Category {
-  final int? id;
-  final String? name;
-  final String? color;
-  final String? icon;
+  final String id;
+  final String name;
+  final String color;
+  final String icon;
 
-  Category({this.id, this.name, this.color, this.icon});
+  Category({this.id = '', this.name = '', this.color = '', this.icon = ''});
 }

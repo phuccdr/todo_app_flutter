@@ -112,7 +112,7 @@ class HomeView extends StatelessWidget {
       builder: (_) {
         return BlocProvider(
           create: (_) => AddTaskCubit(),
-          child: const AddTaskBottomSheet(),
+          child: SafeArea(child: const AddTaskBottomSheet()),
         );
       },
     );

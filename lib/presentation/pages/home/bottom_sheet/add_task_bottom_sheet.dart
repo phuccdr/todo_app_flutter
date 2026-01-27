@@ -5,6 +5,7 @@ import 'package:todoapp/core/theme/app_colors.dart';
 import 'package:todoapp/core/theme/app_text_style.dart';
 import 'package:todoapp/presentation/cubit/task/add_task/add_task_cubit.dart';
 import 'package:todoapp/presentation/cubit/task/add_task/add_task_state.dart';
+import 'package:todoapp/presentation/widget/choose_category/choose_category_dialog.dart';
 import 'package:todoapp/presentation/widget/priority/priority_picker_dialog.dart';
 import 'package:todoapp/presentation/widget/textfield/text_input.dart';
 import 'package:todoapp/presentation/widget/time_picker/task_time_picker.dart';
@@ -16,7 +17,7 @@ class AddTaskBottomSheet extends StatelessWidget {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
     return BlocBuilder<AddTaskCubit, AddTaskState>(
       builder: (BuildContext context, AddTaskState state) {
-        return SafeArea(
+        return SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.only(
               left: 24,
@@ -67,7 +68,18 @@ class AddTaskBottomSheet extends StatelessWidget {
                     ),
                     const SizedBox(width: 32),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        final selectedCateogry =
+                            await ChooseCategoryDialog.show(
+                              context,
+                              initialCategory: state.categoryValidator.value,
+                            );
+                        if (selectedCateogry != null && context.mounted) {
+                          context.read<AddTaskCubit>().onCategoryChanged(
+                            selectedCateogry,
+                          );
+                        }
+                      },
                       icon: SvgPicture.asset(
                         'assets/images/ic_category.svg',
                         width: 24,

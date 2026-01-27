@@ -26,7 +26,6 @@ class TextInput extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextField(
-          autofocus: true,
           onChanged: onChanged,
           style: AppTextStyle.bodyMedium.copyWith(
             color: isValid ? textFocusColor : textUnfocusColor,
