@@ -5,8 +5,9 @@ import 'package:todoapp/core/theme/app_colors.dart';
 import 'package:todoapp/core/theme/app_text_style.dart';
 import 'package:todoapp/presentation/cubit/task/add_task/add_task_cubit.dart';
 import 'package:todoapp/presentation/cubit/task/add_task/add_task_state.dart';
+import 'package:todoapp/presentation/widget/priority/priority_picker_dialog.dart';
 import 'package:todoapp/presentation/widget/textfield/text_input.dart';
-import 'package:todoapp/presentation/widget/time_picker/time_picker_dialog.dart';
+import 'package:todoapp/presentation/widget/time_picker/task_time_picker.dart';
 
 class AddTaskBottomSheet extends StatelessWidget {
   const AddTaskBottomSheet({super.key});
@@ -47,13 +48,16 @@ class AddTaskBottomSheet extends StatelessWidget {
                 Row(
                   children: [
                     IconButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => CustomTimePickerDialog(
-                            intialDate: state.timeTaskValidator.value,
-                          ),
+                      onPressed: () async {
+                        final selectedTime = await TaskTimePicker.show(
+                          context,
+                          initialDate: state.timeTaskValidator.value,
                         );
+                        if (selectedTime != null && context.mounted) {
+                          context.read<AddTaskCubit>().onTimeTaskChanged(
+                            selectedTime,
+                          );
+                        }
                       },
                       icon: SvgPicture.asset(
                         'assets/images/ic_clock.svg',
@@ -72,13 +76,24 @@ class AddTaskBottomSheet extends StatelessWidget {
                     ),
                     const SizedBox(width: 32),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        final selectPriority = await PriorityPickerDialog.show(
+                          context,
+                          initialPriority: state.priorityValidator.value,
+                        );
+                        if (selectPriority != null && context.mounted) {
+                          context.read<AddTaskCubit>().onPriorityChanged(
+                            selectPriority,
+                          );
+                        }
+                      },
                       icon: SvgPicture.asset(
                         'assets/images/ic_priority.svg',
                         width: 24,
                         height: 24,
                       ),
                     ),
+
                     const Spacer(),
                     IconButton(
                       onPressed: () {},

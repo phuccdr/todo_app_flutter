@@ -9,6 +9,7 @@ class ButtonSubmit extends StatelessWidget {
   final Color disabledBackgroundColor;
   final Color textActiveColor;
   final Color textDisabledColor;
+  final double paddingVertical;
 
   const ButtonSubmit({
     super.key,
@@ -18,6 +19,7 @@ class ButtonSubmit extends StatelessWidget {
     this.disabledBackgroundColor = AppColors.buttonDisabled,
     this.textActiveColor = AppColors.textPrimary,
     this.textDisabledColor = AppColors.textButtonDisabled,
+    this.paddingVertical = 12,
   });
 
   @override
@@ -25,7 +27,7 @@ class ButtonSubmit extends StatelessWidget {
     return GestureDetector(
       onTap: onSubmit?.call,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: EdgeInsets.symmetric(vertical: paddingVertical),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4),
