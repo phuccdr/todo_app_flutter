@@ -4,7 +4,8 @@ import 'package:injectable/injectable.dart';
 import 'package:todoapp/core/constants/constant.dart';
 import 'package:todoapp/core/database/app_database.dart';
 import 'package:todoapp/core/di/injection.config.dart';
-import 'package:todoapp/data/datasource/local/dao/category_dao.dart';
+import 'package:todoapp/data/datasource/local/dao/category/category_dao.dart';
+import 'package:todoapp/data/datasource/local/dao/task/task_dao.dart';
 
 final GetIt getIt = GetIt.instance;
 @InjectableInit()
@@ -38,4 +39,6 @@ abstract class AppModule {
   AppDatabase get database => AppDatabase();
   @lazySingleton
   CategoryDao categoryDao(AppDatabase db) => CategoryDao(db);
+  @lazySingleton
+  TaskDao taskDao(AppDatabase db) => TaskDao(db);
 }

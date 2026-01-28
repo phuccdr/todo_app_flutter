@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:todoapp/data/datasource/local/tables/categories.dart';
 import 'package:todoapp/data/datasource/local/tables/tasks.dart';
+import 'package:todoapp/domain/entities/sync_status.dart';
 
 part 'app_database.g.dart';
 

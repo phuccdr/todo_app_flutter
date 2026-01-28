@@ -77,7 +77,7 @@ class _ChooseCategoryDialogView extends StatelessWidget {
                                 state.selectedCategory?.id ==
                                 state.categories[index].id,
                           )
-                        : AddCategoryItem(),
+                        : AddCategoryItem(onTap: () {}),
                   ),
                   const SizedBox(height: 32),
                   _buildChooseCategoryAction(context, state),
@@ -115,6 +115,35 @@ class _ChooseCategoryDialogView extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class AddCategoryItem extends StatelessWidget {
+  final VoidCallback? onTap;
+
+  const AddCategoryItem({this.onTap, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: AppColors.lightgreen,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Center(child: Icon(Icons.add)),
+          ),
+          const SizedBox(height: 6),
+          Text('Create New', style: AppTextStyle.labelMedium),
+        ],
+      ),
     );
   }
 }

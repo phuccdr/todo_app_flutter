@@ -370,9 +370,9 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
   late final GeneratedColumn<String> title = GeneratedColumn<String>(
     'title',
     aliasedName,
-    true,
+    false,
     type: DriftSqlType.string,
-    requiredDuringInsert: false,
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _descriptionMeta = const VerificationMeta(
     'description',
@@ -462,6 +462,16 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
     defaultValue: currentDate,
   );
   @override
+  late final GeneratedColumnWithTypeConverter<SyncStatus, int> syncStatus =
+      GeneratedColumn<int>(
+        'sync_status',
+        aliasedName,
+        false,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+        defaultValue: const Constant(2),
+      ).withConverter<SyncStatus>($TasksTable.$convertersyncStatus);
+  @override
   List<GeneratedColumn> get $columns => [
     id,
     title,
@@ -472,6 +482,7 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
     isCompleted,
     createAt,
     updateAt,
+    syncStatus,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -495,6 +506,8 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
         _titleMeta,
         title.isAcceptableOrUnknown(data['title']!, _titleMeta),
       );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
     }
     if (data.containsKey('description')) {
       context.handle(
@@ -566,7 +579,7 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
       title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}title'],
-      ),
+      )!,
       description: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}description'],
@@ -595,6 +608,12 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}update_at'],
       )!,
+      syncStatus: $TasksTable.$convertersyncStatus.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}sync_status'],
+        )!,
+      ),
     );
   }
 
@@ -602,11 +621,14 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
   $TasksTable createAlias(String alias) {
     return $TasksTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<SyncStatus, int, int> $convertersyncStatus =
+      const EnumIndexConverter<SyncStatus>(SyncStatus.values);
 }
 
 class Task extends DataClass implements Insertable<Task> {
   final String id;
-  final String? title;
+  final String title;
   final String description;
   final DateTime taskTime;
   final String categoryId;
@@ -614,9 +636,10 @@ class Task extends DataClass implements Insertable<Task> {
   final bool isCompleted;
   final DateTime createAt;
   final DateTime updateAt;
+  final SyncStatus syncStatus;
   const Task({
     required this.id,
-    this.title,
+    required this.title,
     required this.description,
     required this.taskTime,
     required this.categoryId,
@@ -624,14 +647,13 @@ class Task extends DataClass implements Insertable<Task> {
     required this.isCompleted,
     required this.createAt,
     required this.updateAt,
+    required this.syncStatus,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
-    if (!nullToAbsent || title != null) {
-      map['title'] = Variable<String>(title);
-    }
+    map['title'] = Variable<String>(title);
     map['description'] = Variable<String>(description);
     map['task_time'] = Variable<DateTime>(taskTime);
     map['category_id'] = Variable<String>(categoryId);
@@ -639,15 +661,18 @@ class Task extends DataClass implements Insertable<Task> {
     map['is_completed'] = Variable<bool>(isCompleted);
     map['create_at'] = Variable<DateTime>(createAt);
     map['update_at'] = Variable<DateTime>(updateAt);
+    {
+      map['sync_status'] = Variable<int>(
+        $TasksTable.$convertersyncStatus.toSql(syncStatus),
+      );
+    }
     return map;
   }
 
   TasksCompanion toCompanion(bool nullToAbsent) {
     return TasksCompanion(
       id: Value(id),
-      title: title == null && nullToAbsent
-          ? const Value.absent()
-          : Value(title),
+      title: Value(title),
       description: Value(description),
       taskTime: Value(taskTime),
       categoryId: Value(categoryId),
@@ -655,6 +680,7 @@ class Task extends DataClass implements Insertable<Task> {
       isCompleted: Value(isCompleted),
       createAt: Value(createAt),
       updateAt: Value(updateAt),
+      syncStatus: Value(syncStatus),
     );
   }
 
@@ -665,7 +691,7 @@ class Task extends DataClass implements Insertable<Task> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Task(
       id: serializer.fromJson<String>(json['id']),
-      title: serializer.fromJson<String?>(json['title']),
+      title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String>(json['description']),
       taskTime: serializer.fromJson<DateTime>(json['taskTime']),
       categoryId: serializer.fromJson<String>(json['categoryId']),
@@ -673,6 +699,9 @@ class Task extends DataClass implements Insertable<Task> {
       isCompleted: serializer.fromJson<bool>(json['isCompleted']),
       createAt: serializer.fromJson<DateTime>(json['createAt']),
       updateAt: serializer.fromJson<DateTime>(json['updateAt']),
+      syncStatus: $TasksTable.$convertersyncStatus.fromJson(
+        serializer.fromJson<int>(json['syncStatus']),
+      ),
     );
   }
   @override
@@ -680,7 +709,7 @@ class Task extends DataClass implements Insertable<Task> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
-      'title': serializer.toJson<String?>(title),
+      'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String>(description),
       'taskTime': serializer.toJson<DateTime>(taskTime),
       'categoryId': serializer.toJson<String>(categoryId),
@@ -688,12 +717,15 @@ class Task extends DataClass implements Insertable<Task> {
       'isCompleted': serializer.toJson<bool>(isCompleted),
       'createAt': serializer.toJson<DateTime>(createAt),
       'updateAt': serializer.toJson<DateTime>(updateAt),
+      'syncStatus': serializer.toJson<int>(
+        $TasksTable.$convertersyncStatus.toJson(syncStatus),
+      ),
     };
   }
 
   Task copyWith({
     String? id,
-    Value<String?> title = const Value.absent(),
+    String? title,
     String? description,
     DateTime? taskTime,
     String? categoryId,
@@ -701,9 +733,10 @@ class Task extends DataClass implements Insertable<Task> {
     bool? isCompleted,
     DateTime? createAt,
     DateTime? updateAt,
+    SyncStatus? syncStatus,
   }) => Task(
     id: id ?? this.id,
-    title: title.present ? title.value : this.title,
+    title: title ?? this.title,
     description: description ?? this.description,
     taskTime: taskTime ?? this.taskTime,
     categoryId: categoryId ?? this.categoryId,
@@ -711,6 +744,7 @@ class Task extends DataClass implements Insertable<Task> {
     isCompleted: isCompleted ?? this.isCompleted,
     createAt: createAt ?? this.createAt,
     updateAt: updateAt ?? this.updateAt,
+    syncStatus: syncStatus ?? this.syncStatus,
   );
   Task copyWithCompanion(TasksCompanion data) {
     return Task(
@@ -729,6 +763,9 @@ class Task extends DataClass implements Insertable<Task> {
           : this.isCompleted,
       createAt: data.createAt.present ? data.createAt.value : this.createAt,
       updateAt: data.updateAt.present ? data.updateAt.value : this.updateAt,
+      syncStatus: data.syncStatus.present
+          ? data.syncStatus.value
+          : this.syncStatus,
     );
   }
 
@@ -743,7 +780,8 @@ class Task extends DataClass implements Insertable<Task> {
           ..write('priority: $priority, ')
           ..write('isCompleted: $isCompleted, ')
           ..write('createAt: $createAt, ')
-          ..write('updateAt: $updateAt')
+          ..write('updateAt: $updateAt, ')
+          ..write('syncStatus: $syncStatus')
           ..write(')'))
         .toString();
   }
@@ -759,6 +797,7 @@ class Task extends DataClass implements Insertable<Task> {
     isCompleted,
     createAt,
     updateAt,
+    syncStatus,
   );
   @override
   bool operator ==(Object other) =>
@@ -772,12 +811,13 @@ class Task extends DataClass implements Insertable<Task> {
           other.priority == this.priority &&
           other.isCompleted == this.isCompleted &&
           other.createAt == this.createAt &&
-          other.updateAt == this.updateAt);
+          other.updateAt == this.updateAt &&
+          other.syncStatus == this.syncStatus);
 }
 
 class TasksCompanion extends UpdateCompanion<Task> {
   final Value<String> id;
-  final Value<String?> title;
+  final Value<String> title;
   final Value<String> description;
   final Value<DateTime> taskTime;
   final Value<String> categoryId;
@@ -785,6 +825,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
   final Value<bool> isCompleted;
   final Value<DateTime> createAt;
   final Value<DateTime> updateAt;
+  final Value<SyncStatus> syncStatus;
   final Value<int> rowid;
   const TasksCompanion({
     this.id = const Value.absent(),
@@ -796,11 +837,12 @@ class TasksCompanion extends UpdateCompanion<Task> {
     this.isCompleted = const Value.absent(),
     this.createAt = const Value.absent(),
     this.updateAt = const Value.absent(),
+    this.syncStatus = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   TasksCompanion.insert({
     required String id,
-    this.title = const Value.absent(),
+    required String title,
     required String description,
     required DateTime taskTime,
     required String categoryId,
@@ -808,8 +850,10 @@ class TasksCompanion extends UpdateCompanion<Task> {
     this.isCompleted = const Value.absent(),
     this.createAt = const Value.absent(),
     this.updateAt = const Value.absent(),
+    this.syncStatus = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
+       title = Value(title),
        description = Value(description),
        taskTime = Value(taskTime),
        categoryId = Value(categoryId);
@@ -823,6 +867,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
     Expression<bool>? isCompleted,
     Expression<DateTime>? createAt,
     Expression<DateTime>? updateAt,
+    Expression<int>? syncStatus,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -835,13 +880,14 @@ class TasksCompanion extends UpdateCompanion<Task> {
       if (isCompleted != null) 'is_completed': isCompleted,
       if (createAt != null) 'create_at': createAt,
       if (updateAt != null) 'update_at': updateAt,
+      if (syncStatus != null) 'sync_status': syncStatus,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
   TasksCompanion copyWith({
     Value<String>? id,
-    Value<String?>? title,
+    Value<String>? title,
     Value<String>? description,
     Value<DateTime>? taskTime,
     Value<String>? categoryId,
@@ -849,6 +895,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
     Value<bool>? isCompleted,
     Value<DateTime>? createAt,
     Value<DateTime>? updateAt,
+    Value<SyncStatus>? syncStatus,
     Value<int>? rowid,
   }) {
     return TasksCompanion(
@@ -861,6 +908,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
       isCompleted: isCompleted ?? this.isCompleted,
       createAt: createAt ?? this.createAt,
       updateAt: updateAt ?? this.updateAt,
+      syncStatus: syncStatus ?? this.syncStatus,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -895,6 +943,11 @@ class TasksCompanion extends UpdateCompanion<Task> {
     if (updateAt.present) {
       map['update_at'] = Variable<DateTime>(updateAt.value);
     }
+    if (syncStatus.present) {
+      map['sync_status'] = Variable<int>(
+        $TasksTable.$convertersyncStatus.toSql(syncStatus.value),
+      );
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -913,6 +966,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
           ..write('isCompleted: $isCompleted, ')
           ..write('createAt: $createAt, ')
           ..write('updateAt: $updateAt, ')
+          ..write('syncStatus: $syncStatus, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1228,7 +1282,7 @@ typedef $$CategoriesTableProcessedTableManager =
 typedef $$TasksTableCreateCompanionBuilder =
     TasksCompanion Function({
       required String id,
-      Value<String?> title,
+      required String title,
       required String description,
       required DateTime taskTime,
       required String categoryId,
@@ -1236,12 +1290,13 @@ typedef $$TasksTableCreateCompanionBuilder =
       Value<bool> isCompleted,
       Value<DateTime> createAt,
       Value<DateTime> updateAt,
+      Value<SyncStatus> syncStatus,
       Value<int> rowid,
     });
 typedef $$TasksTableUpdateCompanionBuilder =
     TasksCompanion Function({
       Value<String> id,
-      Value<String?> title,
+      Value<String> title,
       Value<String> description,
       Value<DateTime> taskTime,
       Value<String> categoryId,
@@ -1249,6 +1304,7 @@ typedef $$TasksTableUpdateCompanionBuilder =
       Value<bool> isCompleted,
       Value<DateTime> createAt,
       Value<DateTime> updateAt,
+      Value<SyncStatus> syncStatus,
       Value<int> rowid,
     });
 
@@ -1321,6 +1377,12 @@ class $$TasksTableFilterComposer extends Composer<_$AppDatabase, $TasksTable> {
     column: $table.updateAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  ColumnWithTypeConverterFilters<SyncStatus, SyncStatus, int> get syncStatus =>
+      $composableBuilder(
+        column: $table.syncStatus,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
 
   $$CategoriesTableFilterComposer get categoryId {
     final $$CategoriesTableFilterComposer composer = $composerBuilder(
@@ -1395,6 +1457,11 @@ class $$TasksTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get syncStatus => $composableBuilder(
+    column: $table.syncStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$CategoriesTableOrderingComposer get categoryId {
     final $$CategoriesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -1456,6 +1523,12 @@ class $$TasksTableAnnotationComposer
   GeneratedColumn<DateTime> get updateAt =>
       $composableBuilder(column: $table.updateAt, builder: (column) => column);
 
+  GeneratedColumnWithTypeConverter<SyncStatus, int> get syncStatus =>
+      $composableBuilder(
+        column: $table.syncStatus,
+        builder: (column) => column,
+      );
+
   $$CategoriesTableAnnotationComposer get categoryId {
     final $$CategoriesTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -1509,7 +1582,7 @@ class $$TasksTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
-                Value<String?> title = const Value.absent(),
+                Value<String> title = const Value.absent(),
                 Value<String> description = const Value.absent(),
                 Value<DateTime> taskTime = const Value.absent(),
                 Value<String> categoryId = const Value.absent(),
@@ -1517,6 +1590,7 @@ class $$TasksTableTableManager
                 Value<bool> isCompleted = const Value.absent(),
                 Value<DateTime> createAt = const Value.absent(),
                 Value<DateTime> updateAt = const Value.absent(),
+                Value<SyncStatus> syncStatus = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TasksCompanion(
                 id: id,
@@ -1528,12 +1602,13 @@ class $$TasksTableTableManager
                 isCompleted: isCompleted,
                 createAt: createAt,
                 updateAt: updateAt,
+                syncStatus: syncStatus,
                 rowid: rowid,
               ),
           createCompanionCallback:
               ({
                 required String id,
-                Value<String?> title = const Value.absent(),
+                required String title,
                 required String description,
                 required DateTime taskTime,
                 required String categoryId,
@@ -1541,6 +1616,7 @@ class $$TasksTableTableManager
                 Value<bool> isCompleted = const Value.absent(),
                 Value<DateTime> createAt = const Value.absent(),
                 Value<DateTime> updateAt = const Value.absent(),
+                Value<SyncStatus> syncStatus = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => TasksCompanion.insert(
                 id: id,
@@ -1552,6 +1628,7 @@ class $$TasksTableTableManager
                 isCompleted: isCompleted,
                 createAt: createAt,
                 updateAt: updateAt,
+                syncStatus: syncStatus,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

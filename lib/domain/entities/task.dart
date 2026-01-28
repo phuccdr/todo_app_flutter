@@ -1,5 +1,6 @@
 import 'package:todoapp/domain/entities/category.dart';
 import 'package:todoapp/domain/entities/priority.dart';
+import 'package:todoapp/domain/entities/sync_status.dart';
 
 class Task {
   final String id;
@@ -10,6 +11,7 @@ class Task {
   final Priority? priority;
   final bool isCompleted;
   final DateTime? createAt;
+  final SyncStatus? syncStatus;
 
   const Task({
     this.id = '',
@@ -20,6 +22,7 @@ class Task {
     this.priority = Priority.one,
     this.isCompleted = false,
     this.createAt,
+    this.syncStatus,
   });
 
   Task copyWith({
@@ -30,6 +33,7 @@ class Task {
     Category? category,
     Priority? priority,
     bool? isCompleted,
+    SyncStatus? syncStatus,
   }) {
     return Task(
       id: id ?? this.id,
@@ -39,6 +43,7 @@ class Task {
       category: category ?? this.category,
       priority: priority ?? this.priority,
       isCompleted: isCompleted ?? this.isCompleted,
+      syncStatus: syncStatus ?? this.syncStatus,
     );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:injectable/injectable.dart';
-import 'package:todoapp/data/datasource/local/dao/category_dao.dart';
+import 'package:todoapp/data/datasource/local/dao/category/category_dao.dart';
 import 'package:todoapp/data/models/category_model.dart';
 
 @LazySingleton()

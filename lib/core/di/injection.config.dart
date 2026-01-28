@@ -19,16 +19,26 @@ import 'package:todoapp/core/utils/validator/confirm_password_validator.dart'
     as _i18;
 import 'package:todoapp/core/utils/validator/name_validator.dart' as _i703;
 import 'package:todoapp/core/utils/validator/password_validator.dart' as _i488;
-import 'package:todoapp/data/datasource/local/dao/category_dao.dart' as _i716;
+import 'package:todoapp/data/datasource/local/dao/category/category_dao.dart'
+    as _i107;
+import 'package:todoapp/data/datasource/local/dao/task/task_dao.dart' as _i782;
 import 'package:todoapp/data/datasource/local/local_data_source/category_local_datasource.dart'
     as _i812;
+import 'package:todoapp/data/datasource/local/local_data_source/task_local_datasource.dart'
+    as _i1023;
 import 'package:todoapp/data/datasource/remote/category_remote_datasource.dart'
     as _i955;
+import 'package:todoapp/data/datasource/remote/task_remote_datasource.dart'
+    as _i290;
 import 'package:todoapp/data/repositories/category_repo/category_repository_impl.dart'
     as _i788;
+import 'package:todoapp/data/repositories/task_repo/task_repository_impl.dart'
+    as _i387;
 import 'package:todoapp/domain/entities/task.dart' as _i1017;
 import 'package:todoapp/domain/repositories/category_repository/category_repository.dart'
     as _i872;
+import 'package:todoapp/domain/repositories/task_repository/task_repository.dart'
+    as _i560;
 import 'package:todoapp/domain/usecase/get_categories_usecase.dart' as _i839;
 import 'package:todoapp/presentation/cubit/dialog/category_cubit.dart' as _i895;
 import 'package:todoapp/presentation/cubit/login/login_cubit.dart' as _i709;
@@ -72,8 +82,11 @@ extension GetItInjectableX on _i174.GetIt {
         errorMessage: gh<String>(),
       ),
     );
-    gh.lazySingleton<_i716.CategoryDao>(
+    gh.lazySingleton<_i107.CategoryDao>(
       () => appModule.categoryDao(gh<_i850.AppDatabase>()),
+    );
+    gh.lazySingleton<_i782.TaskDao>(
+      () => appModule.taskDao(gh<_i850.AppDatabase>()),
     );
     gh.factory<_i376.TaskListCubit>(
       () => _i376.TaskListCubit(gh<_i46.TaskListState>()),
@@ -81,14 +94,20 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i955.CategoryRemoteDatasource>(
       () => _i955.CategoryRemoteDatasource(gh<_i361.Dio>()),
     );
+    gh.lazySingleton<_i290.TaskRemoteDatasource>(
+      () => _i290.TaskRemoteDatasource(gh<_i361.Dio>()),
+    );
     gh.lazySingleton<_i812.CategoryLocalDatasource>(
-      () => _i812.CategoryLocalDatasource(gh<_i716.CategoryDao>()),
+      () => _i812.CategoryLocalDatasource(gh<_i107.CategoryDao>()),
     );
     gh.lazySingleton<_i872.CategoryRepository>(
       () => _i788.CategoryRepositoryImpl(
         gh<_i955.CategoryRemoteDatasource>(),
         gh<_i812.CategoryLocalDatasource>(),
       ),
+    );
+    gh.lazySingleton<_i1023.TaskLocalDatasource>(
+      () => _i1023.TaskLocalDatasource(gh<_i782.TaskDao>()),
     );
     gh.factory<_i637.LoginState>(
       () => _i637.LoginState(
@@ -103,6 +122,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i895.CategoryCubit>(
       () => _i895.CategoryCubit(gh<_i839.GetCategoriesUseCase>()),
+    );
+    gh.lazySingleton<_i560.TaskRepository>(
+      () => _i387.TaskRepositoryImpl(
+        gh<_i1023.TaskLocalDatasource>(),
+        gh<_i290.TaskRemoteDatasource>(),
+      ),
     );
     gh.factory<_i709.LoginCubit>(
       () => _i709.LoginCubit(gh<_i637.LoginState>()),

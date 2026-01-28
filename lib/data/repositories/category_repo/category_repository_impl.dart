@@ -26,7 +26,6 @@ class CategoryRepositoryImpl implements CategoryRepository {
     try {
       final remoteCategories = await _remoteDatasource.getCategories();
       await _localDataSource.insertCategories(remoteCategories);
-      yield Right(remoteCategories.map((c) => c.toEntity()).toList());
     } catch (e) {
       if (!isLoadedLocal) {
         yield Left(Failure(message: e.toString()));
