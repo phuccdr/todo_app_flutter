@@ -29,7 +29,7 @@ class ChooseCategoryDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<CategoryCubit>(
-      create: (context) => getIt<CategoryCubit>()..getCategories(),
+      create: (context) => getIt<CategoryCubit>(),
       child: _ChooseCategoryDialogView(),
     );
   }

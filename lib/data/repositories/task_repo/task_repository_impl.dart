@@ -15,20 +15,13 @@ class TaskRepositoryImpl implements TaskRepository {
   TaskRepositoryImpl(this._localDataSource, this._remoteDatasource);
 
   @override
-  Stream<Either<Failure, List<Task>>> getTasks() async* {
-    bool isLoadedLocal = false;
-    try {
-      final localTasks = await _localDataSource.getTasks();
-      yield Right(localTasks.map((t) => t.toEntity()).toList());
-      isLoadedLocal = true;
-    } catch (_) {}
+  Future<Either<Failure, void>> fetchTasksFromServer() async {
     try {
       final remoteTasks = await _remoteDatasource.getTasks();
       await _localDataSource.insertTasks(remoteTasks);
+      return Right(null);
     } catch (e) {
-      if (!isLoadedLocal) {
-        yield Left(Failure(message: e.toString()));
-      }
+      return Left(Failure(message: e.toString()));
     }
   }
 

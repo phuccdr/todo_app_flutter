@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
+import 'package:go_router/go_router.dart';
+import 'package:todoapp/core/di/injection.dart';
 import 'package:todoapp/core/theme/app_text_style.dart';
 import 'package:todoapp/core/utils/validator/name_validator.dart';
 import 'package:todoapp/core/utils/validator/password_validator.dart';
@@ -16,7 +18,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LoginCubit(LoginState()),
+      create: (context) => getIt<LoginCubit>(),
       child: const _LoginView(),
     );
   }
@@ -30,6 +32,7 @@ class _LoginView extends StatelessWidget {
     return BlocListener<LoginCubit, LoginState>(
       listener: (BuildContext context, LoginState state) {
         if (state.status == FormzSubmissionStatus.success) {
+          context.go('/home');
         } else if (state.status.isInProgress) {
           _showLoading();
         } else if (state.status == FormzSubmissionStatus.failure) {

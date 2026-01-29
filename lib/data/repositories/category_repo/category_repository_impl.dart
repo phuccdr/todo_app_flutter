@@ -13,23 +13,13 @@ class CategoryRepositoryImpl implements CategoryRepository {
   CategoryRepositoryImpl(this._remoteDatasource, this._localDataSource);
 
   @override
-  Stream<Either<Failure, List<Category>>> getCategories() async* {
-    bool isLoadedLocal = false;
-    try {
-      final localCategories = await _localDataSource.getCategories();
-      if (localCategories.isNotEmpty) {
-        yield Right(localCategories.map((c) => c.toEntity()).toList());
-        isLoadedLocal = true;
-      }
-    } catch (_) {}
-
+  Future<Either<Failure, void>> fetchCategoriesFromServer() async {
     try {
       final remoteCategories = await _remoteDatasource.getCategories();
       await _localDataSource.insertCategories(remoteCategories);
+      return Right(null);
     } catch (e) {
-      if (!isLoadedLocal) {
-        yield Left(Failure(message: e.toString()));
-      }
+      return Left(Failure());
     }
   }
 
