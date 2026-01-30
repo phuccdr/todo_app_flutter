@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:formz/formz.dart';
+import 'package:go_router/go_router.dart';
 import 'package:todoapp/core/theme/app_colors.dart';
 import 'package:todoapp/core/theme/app_text_style.dart';
 import 'package:todoapp/presentation/cubit/task/add_task/add_task_cubit.dart';
@@ -15,7 +17,7 @@ class AddTaskBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
-    return BlocBuilder<AddTaskCubit, AddTaskState>(
+    return BlocConsumer<AddTaskCubit, AddTaskState>(
       builder: (BuildContext context, AddTaskState state) {
         return SingleChildScrollView(
           child: Padding(
@@ -108,7 +110,9 @@ class AddTaskBottomSheet extends StatelessWidget {
 
                     const Spacer(),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        context.read<AddTaskCubit>().onSubmit();
+                      },
                       icon: SvgPicture.asset(
                         'assets/images/ic_send.svg',
                         width: 24,
@@ -127,6 +131,14 @@ class AddTaskBottomSheet extends StatelessWidget {
             ),
           ),
         );
+      },
+      listener: (BuildContext context, AddTaskState state) {
+        if (state.status == FormzSubmissionStatus.success) {
+          context.pop();
+        } else if (state.status == FormzSubmissionStatus.inProgress) {
+        } else if (state.status == FormzSubmissionStatus.failure) {
+          print("insertTask: failure");
+        }
       },
     );
   }

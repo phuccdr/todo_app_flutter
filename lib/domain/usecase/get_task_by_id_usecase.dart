@@ -5,10 +5,10 @@ import 'package:todoapp/domain/entities/task.dart';
 import 'package:todoapp/domain/repositories/task_repository/task_repository.dart';
 
 @injectable
-class WatchTaskUsecase {
-  final TaskRepository _taskRepository;
-  WatchTaskUsecase(this._taskRepository);
-  Stream<Either<Failure, List<Task>>> execute() {
-    return _taskRepository.watchTasks();
+class GetTaskByIdUsecase {
+  final TaskRepository _taskRepo;
+  const GetTaskByIdUsecase(this._taskRepo);
+  Future<Either<Failure, Task?>> excute(String taskId) async {
+    return _taskRepo.getTaskById(taskId);
   }
 }

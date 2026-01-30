@@ -3,19 +3,13 @@ import 'package:formz/formz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:todoapp/core/utils/validator/name_validator.dart';
 import 'package:todoapp/core/utils/validator/password_validator.dart';
-import 'package:todoapp/domain/usecase/check_loggedin_usecase.dart';
 import 'package:todoapp/domain/usecase/login_usecase.dart';
 import 'package:todoapp/presentation/cubit/login/login_state.dart';
 
 @injectable
 class LoginCubit extends Cubit<LoginState> {
   final LoginUsecase _loginUsecase;
-  final CheckLoggedinUsecase _checkLoggedinUsecase;
-  LoginCubit(
-    super.initialState,
-    this._loginUsecase,
-    this._checkLoggedinUsecase,
-  );
+  LoginCubit(this._loginUsecase) : super(const LoginState());
 
   void onUserNameChange(String value) {
     final nameValidator = NameValidator.dirty(value);
@@ -45,7 +39,7 @@ class LoginCubit extends Cubit<LoginState> {
     );
     result.fold(
       (e) => emit(state.copyWith(status: FormzSubmissionStatus.failure)),
-      (_) => state.copyWith(status: FormzSubmissionStatus.success),
+      (_) => emit(state.copyWith(status: FormzSubmissionStatus.success)),
     );
   }
 }

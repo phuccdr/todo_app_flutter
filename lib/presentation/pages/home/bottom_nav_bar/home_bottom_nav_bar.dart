@@ -26,9 +26,9 @@ class HomeBottomNavBar extends StatelessWidget {
                       height: 24,
                     ),
                     label: 'Home',
-                    index: 1,
+                    index: 0,
                     onPresses: () {
-                      context.read<NavigationCubit>().setIndex(1);
+                      context.read<NavigationCubit>().setIndex(0);
                     },
                   ),
                   BottomNavigationItem(
@@ -38,9 +38,9 @@ class HomeBottomNavBar extends StatelessWidget {
                       height: 24,
                     ),
                     label: 'Calendar',
-                    index: 2,
+                    index: 1,
                     onPresses: () {
-                      context.read<NavigationCubit>().setIndex(2);
+                      context.read<NavigationCubit>().setIndex(1);
                     },
                   ),
                   const SizedBox(width: 24),
@@ -51,9 +51,9 @@ class HomeBottomNavBar extends StatelessWidget {
                       height: 24,
                     ),
                     label: 'Focus',
-                    index: 3,
+                    index: 2,
                     onPresses: () {
-                      context.read<NavigationCubit>().setIndex(3);
+                      context.read<NavigationCubit>().setIndex(2);
                     },
                   ),
                   BottomNavigationItem(
@@ -63,9 +63,9 @@ class HomeBottomNavBar extends StatelessWidget {
                       height: 24,
                     ),
                     label: 'Profile',
-                    index: 4,
+                    index: 3,
                     onPresses: () {
-                      context.read<NavigationCubit>().setIndex(4);
+                      context.read<NavigationCubit>().setIndex(3);
                     },
                   ),
                 ],

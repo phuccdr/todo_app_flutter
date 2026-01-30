@@ -1,4 +1,3 @@
-import 'package:todoapp/domain/entities/category.dart';
 import 'package:todoapp/domain/entities/priority.dart';
 import 'package:todoapp/domain/entities/sync_status.dart';
 
@@ -7,7 +6,7 @@ class Task {
   final String title;
   final String? description;
   final DateTime? taskTime;
-  final Category? category;
+  final String? categoryId;
   final Priority? priority;
   final bool isCompleted;
   final DateTime? createAt;
@@ -18,7 +17,7 @@ class Task {
     this.title = '',
     this.description = '',
     this.taskTime,
-    this.category,
+    this.categoryId = '',
     this.priority = Priority.one,
     this.isCompleted = false,
     this.createAt,
@@ -30,7 +29,7 @@ class Task {
     String? title,
     String? description,
     DateTime? taskTime,
-    Category? category,
+    String? categoryId,
     Priority? priority,
     bool? isCompleted,
     SyncStatus? syncStatus,
@@ -40,7 +39,7 @@ class Task {
       title: title ?? this.title,
       description: description ?? this.description,
       taskTime: taskTime ?? this.taskTime,
-      category: category ?? this.category,
+      categoryId: categoryId ?? this.categoryId,
       priority: priority ?? this.priority,
       isCompleted: isCompleted ?? this.isCompleted,
       syncStatus: syncStatus ?? this.syncStatus,

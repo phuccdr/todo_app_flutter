@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todoapp/core/di/injection.dart';
 import 'package:todoapp/core/theme/app_colors.dart';
 import 'package:todoapp/core/theme/app_text_style.dart';
+import 'package:todoapp/core/utils/network_image_util.dart';
+import 'package:todoapp/presentation/cubit/auth/auth_cubit.dart';
+import 'package:todoapp/presentation/cubit/auth/auth_state.dart';
 import 'package:todoapp/presentation/cubit/navigation/navigation_cubit.dart';
 import 'package:todoapp/presentation/cubit/task/add_task/add_task_cubit.dart';
+import 'package:todoapp/presentation/cubit/task/task_list/task_list_cubit.dart';
 import 'package:todoapp/presentation/pages/home/bottom_nav_bar/home_bottom_nav_bar.dart';
 import 'package:todoapp/presentation/pages/home/bottom_sheet/add_task_bottom_sheet.dart';
 import 'package:todoapp/presentation/pages/home/calendar/calendar_tab_view.dart';
@@ -15,8 +20,11 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => NavigationCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => NavigationCubit()),
+        BlocProvider(create: (_) => getIt<TaskListCubit>()..init()),
+      ],
       child: const HomeView(),
     );
   }
@@ -71,16 +79,19 @@ class HomeView extends StatelessWidget {
       ),
       centerTitle: true,
       actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 12),
-          child: ClipOval(
-            child: Image.network(
-              'https://i.pinimg.com/originals/27/37/df/2737df777c77ec625810d903d2ee98e1.jpg',
-              width: 42,
-              height: 42,
-              fit: BoxFit.cover,
-            ),
-          ),
+        BlocBuilder<AuthCubit, AuthState>(
+          builder: (context, state) {
+            return Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: ClipOval(
+                child: NetworkImageUtil.load(
+                  state.user?.avatar ?? '',
+                  width: 42,
+                  height: 42,
+                ),
+              ),
+            );
+          },
         ),
       ],
     );
@@ -92,9 +103,9 @@ class HomeView extends StatelessWidget {
         return 'Home';
       case 1:
         return 'Calendar';
-      case 3:
+      case 2:
         return 'Focus';
-      case 4:
+      case 3:
         return 'Profile';
       default:
         return 'Todo App';
@@ -111,7 +122,7 @@ class HomeView extends StatelessWidget {
       ),
       builder: (_) {
         return BlocProvider(
-          create: (_) => AddTaskCubit(),
+          create: (_) => getIt<AddTaskCubit>(),
           child: SafeArea(child: const AddTaskBottomSheet()),
         );
       },

@@ -33,10 +33,6 @@ class Prefs {
     return await _prefs.remove(_keyUser);
   }
 
-  bool isLoggedIn() {
-    return getUser() != null;
-  }
-
   Future<bool> clear() async {
     return await _prefs.clear();
   }

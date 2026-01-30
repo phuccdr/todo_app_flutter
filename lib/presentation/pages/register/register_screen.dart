@@ -44,7 +44,7 @@ class _RegisterView extends StatelessWidget {
             padding: const EdgeInsets.only(left: 24),
             child: IconButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                context.pop();
               },
               icon: const Icon(Icons.arrow_back_ios),
             ),
@@ -153,7 +153,7 @@ class _RegisterView extends StatelessWidget {
   }
 
   void _onRegisterSuccess(BuildContext context) {
-    // TODO: Navigate to home or login screen
+    context.pop();
   }
 
   void _showLoading() {

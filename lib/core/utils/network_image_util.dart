@@ -19,7 +19,7 @@ class NetworkImageUtil {
       placeholder: (context, _) =>
           placeholder ??
           const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-      errorWidget: (context, _, __) =>
+      errorWidget: (context, _, _) =>
           errorWidget ?? const Icon(Icons.broken_image),
     );
 

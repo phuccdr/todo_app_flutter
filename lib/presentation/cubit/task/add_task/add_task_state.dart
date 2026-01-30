@@ -4,6 +4,7 @@ import 'package:todoapp/core/utils/validator/not_null_validator.dart';
 import 'package:todoapp/core/utils/validator/text_input_validator.dart';
 import 'package:todoapp/domain/entities/category.dart';
 import 'package:todoapp/domain/entities/priority.dart';
+import 'package:todoapp/domain/entities/task.dart';
 
 class AddTaskState extends Equatable {
   final TextInputValidator titleValidator;
@@ -13,6 +14,7 @@ class AddTaskState extends Equatable {
   final NotNullValidator<Category> categoryValidator;
   final bool isValid;
   final FormzSubmissionStatus status;
+  final Task? initial;
 
   const AddTaskState({
     this.status = FormzSubmissionStatus.initial,
@@ -22,6 +24,7 @@ class AddTaskState extends Equatable {
     this.priorityValidator = const NotNullValidator.pure(),
     this.categoryValidator = const NotNullValidator.pure(),
     this.isValid = false,
+    this.initial,
   });
   @override
   List<Object?> get props => [
@@ -33,6 +36,7 @@ class AddTaskState extends Equatable {
     categoryValidator,
     status,
     isValid,
+    initial,
   ];
 
   AddTaskState copyWith({
@@ -43,6 +47,7 @@ class AddTaskState extends Equatable {
     NotNullValidator<Priority>? priorityValidator,
     NotNullValidator<Category>? categoryValidator,
     bool? isValid,
+    Task? initial,
   }) {
     final newTitle = titleValidator ?? this.titleValidator;
     final newDescription = descriptionValidator ?? this.descriptionValidator;
@@ -66,6 +71,7 @@ class AddTaskState extends Equatable {
       priorityValidator: newPriority,
       categoryValidator: newCategory,
       isValid: isValid,
+      initial: initial,
     );
   }
 }

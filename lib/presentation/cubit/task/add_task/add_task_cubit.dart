@@ -6,11 +6,16 @@ import 'package:todoapp/core/utils/validator/text_input_validator.dart';
 import 'package:todoapp/domain/entities/category.dart';
 import 'package:todoapp/domain/entities/priority.dart';
 import 'package:todoapp/domain/entities/task.dart';
+import 'package:todoapp/domain/usecase/get_task_by_id_usecase.dart';
+import 'package:todoapp/domain/usecase/insert_task_usecase.dart';
 import 'package:todoapp/presentation/cubit/task/add_task/add_task_state.dart';
 
 @injectable
 class AddTaskCubit extends Cubit<AddTaskState> {
-  AddTaskCubit() : super(const AddTaskState());
+  final InsertTaskUsecase _insertTaskUsecase;
+  final GetTaskByIdUsecase _getTaskByIdUsecase;
+  AddTaskCubit(this._insertTaskUsecase, this._getTaskByIdUsecase)
+    : super(const AddTaskState());
 
   void onTitleChanged(String value) {
     final titleValidator = TextInputValidator.dirty(value);
@@ -42,20 +47,41 @@ class AddTaskCubit extends Cubit<AddTaskState> {
     emit(state.copyWith(categoryValidator: categoryValidator));
   }
 
-  Task? onSubmit() {
+  void onSubmit() async {
     if (state.isValid) {
-      return Task(
+      final newTask = Task(
         title: state.titleValidator.value,
         description: state.descriptionValidator.value,
         taskTime: state.timeTaskValidator.value,
-        category: state.categoryValidator.value,
+        categoryId: state.categoryValidator.value?.id,
         priority: state.priorityValidator.value,
       );
+      emit(const AddTaskState(status: FormzSubmissionStatus.inProgress));
+      final result = await _insertTaskUsecase.execute(newTask);
+      result.fold(
+        (e) {
+          emit(state.copyWith(status: FormzSubmissionStatus.failure));
+        },
+        (_) {
+          emit(state.copyWith(status: FormzSubmissionStatus.success));
+        },
+      );
     }
-    return null;
+    return;
   }
 
-  void reset() {
-    emit(const AddTaskState());
+  void getTaskById(String taskId) async {
+    emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
+    final result = await _getTaskByIdUsecase.excute(taskId);
+    result.fold(
+      (e) {
+        emit(state.copyWith(status: FormzSubmissionStatus.failure));
+      },
+      (task) {
+        emit(state.copyWith(initial: task));
+      },
+    );
   }
+
+  void reset() async {}
 }

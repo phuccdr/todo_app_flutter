@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:todoapp/core/error/failure.dart';
 import 'package:todoapp/data/datasource/local/share_pref/prefs.dart';
 import 'package:todoapp/data/datasource/remote/auth_remote_datasource.dart';
+import 'package:todoapp/domain/entities/user.dart';
 import 'package:todoapp/domain/repositories/auth_repository/auth_repository.dart';
 
 @LazySingleton(as: AuthRepository)
@@ -35,10 +36,14 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> isLoggedIn() async {
+  Future<Either<Failure, User>> getUser() async {
     try {
-      final result = _prefs.isLoggedIn();
-      return Right(result);
+      final result = _prefs.getUser();
+      if (result != null) {
+        return Right(result.toEntity());
+      } else {
+        return Left(Failure());
+      }
     } catch (e) {
       return Left(Failure());
     }

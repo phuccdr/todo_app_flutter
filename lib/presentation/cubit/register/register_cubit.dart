@@ -4,11 +4,13 @@ import 'package:injectable/injectable.dart';
 import 'package:todoapp/core/utils/validator/confirm_password_validator.dart';
 import 'package:todoapp/core/utils/validator/name_validator.dart';
 import 'package:todoapp/core/utils/validator/password_validator.dart';
+import 'package:todoapp/domain/usecase/register_usecase.dart';
 import 'package:todoapp/presentation/cubit/register/register_state.dart';
 
 @injectable
 class RegisterCubit extends Cubit<RegisterState> {
-  RegisterCubit() : super(const RegisterState());
+  final RegisterUsecase _registerUsecase;
+  RegisterCubit(this._registerUsecase) : super(const RegisterState());
 
   void onUserNameChange(String value) {
     final nameValidator = NameValidator.dirty(value);
@@ -52,6 +54,32 @@ class RegisterCubit extends Cubit<RegisterState> {
           confirmPasswordValidator,
         ]),
       ),
+    );
+  }
+
+  void onRegister() async {
+    emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
+    final isValid = Formz.validate([
+      state.nameValidator,
+      state.passwordValidator,
+      state.confirmPasswordValidator,
+    ]);
+    if (!isValid) {
+      emit(
+        state.copyWith(status: FormzSubmissionStatus.failure, isValid: isValid),
+      );
+    }
+    final result = await _registerUsecase.excute(
+      state.nameValidator.value,
+      state.passwordValidator.value,
+    );
+    result.fold(
+      (e) {
+        emit(state.copyWith(status: FormzSubmissionStatus.failure));
+      },
+      (_) {
+        emit(state.copyWith(status: FormzSubmissionStatus.success));
+      },
     );
   }
 }

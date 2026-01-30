@@ -6,11 +6,13 @@ import 'package:todoapp/data/datasource/remote/task_remote_datasource.dart';
 import 'package:todoapp/data/models/task_model.dart';
 import 'package:todoapp/domain/entities/task.dart';
 import 'package:todoapp/domain/repositories/task_repository/task_repository.dart';
+import 'package:uuid/uuid.dart';
 
 @LazySingleton(as: TaskRepository)
 class TaskRepositoryImpl implements TaskRepository {
   final TaskLocalDatasource _localDataSource;
   final TaskRemoteDatasource _remoteDatasource;
+  final uuid = Uuid();
 
   TaskRepositoryImpl(this._localDataSource, this._remoteDatasource);
 
@@ -35,12 +37,25 @@ class TaskRepositoryImpl implements TaskRepository {
   @override
   Future<Either<Failure, void>> insertTask(Task task) async {
     try {
-      final taskModel = TaskModel.fromEntity(task);
-      await _localDataSource.upsertTask(taskModel);
-      await _remoteDatasource.insertTask(taskModel);
-      return const Right(null);
-    } catch (e) {
-      return Left(Failure(message: e.toString()));
+      final taskId = uuid.v4();
+      final taskModel = TaskModel.fromEntity(task.copyWith(id: taskId));
+      final resultLocal = await _localDataSource.upsertTask(taskModel);
+
+      if (resultLocal.isLeft()) {
+        return resultLocal;
+      }
+
+      final resultRemote = await _remoteDatasource.insertTask(taskModel);
+      if (resultRemote.isLeft()) {
+        await _localDataSource.deleteTask(taskId);
+      }
+      return resultRemote;
+    } catch (localError) {
+      return Left(
+        Failure(
+          message: 'Failed to insert task locally: ${localError.toString()}',
+        ),
+      );
     }
   }
 

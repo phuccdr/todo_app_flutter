@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todoapp/core/constants/constant.dart';
 import 'package:todoapp/core/database/app_database.dart';
 import 'package:todoapp/core/di/injection.config.dart';
@@ -9,7 +10,7 @@ import 'package:todoapp/data/datasource/local/dao/task/task_dao.dart';
 
 final GetIt getIt = GetIt.instance;
 @InjectableInit()
-void configureDependencies() => getIt.init();
+Future<void> configureDependencies() => getIt.init();
 
 @module
 abstract class AppModule {
@@ -41,4 +42,8 @@ abstract class AppModule {
   CategoryDao categoryDao(AppDatabase db) => CategoryDao(db);
   @lazySingleton
   TaskDao taskDao(AppDatabase db) => TaskDao(db);
+
+  //SharedPreferences() là bất đồng bộ
+  @preResolve
+  Future<SharedPreferences> get prefs => SharedPreferences.getInstance();
 }
