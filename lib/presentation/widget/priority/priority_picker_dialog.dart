@@ -8,16 +8,29 @@ import 'package:todoapp/presentation/widget/button/button_submit.dart';
 
 class PriorityPickerDialog extends StatefulWidget {
   final Priority? initialPriority;
-  const PriorityPickerDialog({super.key, this.initialPriority = Priority.one});
+  const PriorityPickerDialog({
+    super.key,
+    this.initialPriority = Priority.one,
+    this.title,
+    this.textActionButton,
+  });
+  final String? title;
+  final String? textActionButton;
 
   static Future<Priority?> show(
     BuildContext context, {
     Priority? initialPriority,
+    String? title,
+    String? textActionButton,
   }) {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
-        return PriorityPickerDialog(initialPriority: initialPriority);
+        return PriorityPickerDialog(
+          initialPriority: initialPriority,
+          title: title,
+          textActionButton: textActionButton,
+        );
       },
     );
   }
@@ -44,16 +57,19 @@ class _PriorityPickerDialogState extends State<PriorityPickerDialog> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       insetPadding: const EdgeInsets.symmetric(horizontal: 24),
       child: Padding(
-        padding: const EdgeInsetsGeometry.all(8),
+        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Task Priority', style: AppTextStyle.titleMediumBold),
+            Text(
+              widget.title ?? 'Task Priority',
+              style: AppTextStyle.titleMediumBold,
+            ),
             Container(height: 1, color: AppColors.divier),
             const SizedBox(height: 8),
             _buildPriorityPicker(),
             const SizedBox(height: 16),
-            _buildPriorityPickerAction(),
+            _buildPriorityPickerAction(widget.textActionButton),
           ],
         ),
       ),
@@ -105,7 +121,7 @@ class _PriorityPickerDialogState extends State<PriorityPickerDialog> {
     );
   }
 
-  Widget _buildPriorityPickerAction() {
+  Widget _buildPriorityPickerAction(String? textActionButton) {
     return Row(
       children: [
         Expanded(
@@ -124,7 +140,7 @@ class _PriorityPickerDialogState extends State<PriorityPickerDialog> {
             onSubmit: () {
               context.pop(_selectPriority);
             },
-            text: 'Save',
+            text: textActionButton ?? 'Save',
             textActiveColor: AppColors.textPrimary,
             activeBackgroundColor: AppColors.primary,
           ),

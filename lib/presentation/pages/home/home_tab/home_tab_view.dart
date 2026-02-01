@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:todoapp/core/theme/app_colors.dart';
 import 'package:todoapp/core/theme/app_text_style.dart';
 import 'package:todoapp/core/utils/network_image_util.dart';
@@ -61,7 +62,8 @@ class HomeTabView extends StatelessWidget {
   Widget _buildMainView(BuildContext context, TaskListState state) {
     final cubit = context.read<TaskListCubit>();
     final tasksToShowToday = state.filteredTasks.where((task) {
-      return isToDay(task.task.taskTime);
+      // test: return task.task.taskTime?.isToday(DateTime.now()) ?? false;
+      return true;
     }).toList();
     final tasksToShowCompleted = state.filteredTasks.where((task) {
       return task.task.isCompleted;
@@ -192,73 +194,78 @@ class _TaskItem extends StatelessWidget {
     final category = display.category;
     final timeText = HomeTabView._formatTaskTime(task.taskTime);
 
-    return Container(
-      height: _itemHeight,
-      decoration: BoxDecoration(
-        color: AppColors.cardTask,
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Positioned(
-            left: _horizontalPadding,
-            top: (_itemHeight - _radioSize) / 2,
-            width: _radioSize,
-            height: _radioSize,
-            child: RadioGroup<bool>(
-              groupValue: task.isCompleted,
-              onChanged: (_) => onToggle(),
-              child: Radio<bool>(
-                value: true,
-                fillColor: WidgetStateProperty.resolveWith((states) {
-                  if (states.contains(WidgetState.selected)) {
-                    return AppColors.primary;
-                  }
-                  return AppColors.border;
-                }),
+    return GestureDetector(
+      onTap: () {
+        context.push('/detailTask/${task.id}');
+      },
+      child: Container(
+        height: _itemHeight,
+        decoration: BoxDecoration(
+          color: AppColors.cardTask,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Positioned(
+              left: _horizontalPadding,
+              top: (_itemHeight - _radioSize) / 2,
+              width: _radioSize,
+              height: _radioSize,
+              child: RadioGroup<bool>(
+                groupValue: task.isCompleted,
+                onChanged: (_) => onToggle(),
+                child: Radio<bool>(
+                  value: true,
+                  fillColor: WidgetStateProperty.resolveWith((states) {
+                    if (states.contains(WidgetState.selected)) {
+                      return AppColors.primary;
+                    }
+                    return AppColors.border;
+                  }),
+                ),
               ),
             ),
-          ),
-          Positioned(
-            left: _horizontalPadding + _radioSize + _gapAfterRadio,
-            top: _titleTop,
-            child: Text(
-              task.title,
-              style: AppTextStyle.titleSmall,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          Positioned(
-            left: _horizontalPadding + _radioSize + _gapAfterRadio,
-            top: _timeTop,
-            bottom: 12,
-            child: Text(
-              timeText.isNotEmpty ? timeText : '',
-              style: AppTextStyle.labelMedium.copyWith(
-                color: AppColors.textGray,
+            Positioned(
+              left: _horizontalPadding + _radioSize + _gapAfterRadio,
+              top: _titleTop,
+              child: Text(
+                task.title,
+                style: AppTextStyle.titleSmall,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
             ),
-          ),
-          Positioned(
-            right: _horizontalPadding,
-            bottom: 4,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                if (category != null) ...[
-                  _CategoryChip(category: category),
-                  const SizedBox(width: 12),
+            Positioned(
+              left: _horizontalPadding + _radioSize + _gapAfterRadio,
+              top: _timeTop,
+              bottom: 12,
+              child: Text(
+                timeText.isNotEmpty ? timeText : '',
+                style: AppTextStyle.labelMedium.copyWith(
+                  color: AppColors.textGray,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Positioned(
+              right: _horizontalPadding,
+              bottom: 4,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  if (category != null) ...[
+                    _CategoryChip(category: category),
+                    const SizedBox(width: 12),
+                  ],
+                  _PriorityChip(priority: task.priority),
                 ],
-                _PriorityChip(priority: task.priority),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -320,10 +327,4 @@ class _PriorityChip extends StatelessWidget {
       ),
     );
   }
-}
-
-bool isToDay(DateTime? a) {
-  DateTime b = DateTime.now();
-  if (a == null) return false;
-  return a.year == b.year && a.month == b.month && a.day == b.day;
 }

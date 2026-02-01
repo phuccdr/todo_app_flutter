@@ -29,4 +29,14 @@ class CategoryRepositoryImpl implements CategoryRepository {
       (categories) => Right(categories.map((c) => c.toEntity()).toList()),
     );
   }
+
+  @override
+  Future<Either<Failure, Category?>> getCategoryById(String categoryId) async {
+    try {
+      final result = await _localDataSource.getCategoryById(categoryId);
+      return Right(result?.toEntity());
+    } catch (e) {
+      return Left(Failure());
+    }
+  }
 }

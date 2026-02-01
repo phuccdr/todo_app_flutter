@@ -1,11 +1,13 @@
 import 'package:drift/drift.dart';
 import 'package:fpdart/fpdart.dart' hide Task;
+import 'package:injectable/injectable.dart';
 import 'package:todoapp/core/database/app_database.dart';
 import 'package:todoapp/core/error/failure.dart';
 import 'package:todoapp/data/datasource/local/tables/tasks.dart';
 
 part 'task_dao.g.dart';
 
+@lazySingleton
 @DriftAccessor(tables: [Tasks])
 class TaskDao extends DatabaseAccessor<AppDatabase> with _$TaskDaoMixin {
   TaskDao(super.db);

@@ -1,9 +1,11 @@
 import 'package:drift/drift.dart';
+import 'package:injectable/injectable.dart';
 import 'package:todoapp/core/database/app_database.dart';
 import 'package:todoapp/data/datasource/local/tables/categories.dart';
 
 part 'category_dao.g.dart';
 
+@lazySingleton
 @DriftAccessor(tables: [Categories])
 class CategoryDao extends DatabaseAccessor<AppDatabase>
     with _$CategoryDaoMixin {

@@ -13,16 +13,28 @@ import 'package:todoapp/presentation/widget/button/button_submit.dart';
 
 class ChooseCategoryDialog extends StatelessWidget {
   final Category? initialCategory;
-  const ChooseCategoryDialog({super.key, this.initialCategory});
+  const ChooseCategoryDialog({
+    super.key,
+    this.initialCategory,
+    this.textActionButton,
+    this.title,
+  });
+  final String? title;
+  final String? textActionButton;
 
   static Future<Category?> show(
     BuildContext context, {
     Category? initialCategory,
+    String? title,
+    String? textActionButton,
   }) {
     return showDialog<Category?>(
       context: context,
-      builder: (context) =>
-          ChooseCategoryDialog(initialCategory: initialCategory),
+      builder: (context) => ChooseCategoryDialog(
+        initialCategory: initialCategory,
+        title: title,
+        textActionButton: textActionButton,
+      ),
     );
   }
 
@@ -33,13 +45,18 @@ class ChooseCategoryDialog extends StatelessWidget {
         ..initial()
         ..fetchCategories()
         ..initialCategory(initialCategory),
-      child: _ChooseCategoryDialogView(),
+      child: _ChooseCategoryDialogView(
+        title: title,
+        textActionButton: textActionButton,
+      ),
     );
   }
 }
 
 class _ChooseCategoryDialogView extends StatelessWidget {
-  const _ChooseCategoryDialogView();
+  const _ChooseCategoryDialogView({this.title, this.textActionButton});
+  final String? title;
+  final String? textActionButton;
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CategoryCubit, CategoryState>(
@@ -55,7 +72,7 @@ class _ChooseCategoryDialogView extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Choose Category',
+                    title ?? 'Choose Category',
                     style: AppTextStyle.titleSmallBold,
                     textAlign: TextAlign.center,
                   ),
@@ -112,7 +129,7 @@ class _ChooseCategoryDialogView extends StatelessWidget {
             onSubmit: () {
               context.pop(state.selectedCategory);
             },
-            text: 'Save',
+            text: textActionButton ?? 'Save',
             textActiveColor: AppColors.textPrimary,
             activeBackgroundColor: AppColors.primary,
           ),

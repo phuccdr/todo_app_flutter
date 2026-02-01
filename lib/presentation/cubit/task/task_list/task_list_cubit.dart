@@ -49,8 +49,33 @@ class TaskListCubit extends Cubit<TaskListState> {
         },
       ),
     );
-    _fecthCategories();
-    _fetchTasks();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    emit(state.copyWith(status: TaskListStatus.syncing));
+    final categoriesResult = await _fetchCategoriesUseCase.execute();
+    final categoriesSuccess = categoriesResult.fold((_) {
+      emit(
+        state.copyWith(
+          status: TaskListStatus.initial,
+          errorMessage: 'Dữ liệu chưa được sync!',
+        ),
+      );
+      return false;
+    }, (_) => true);
+    if (!categoriesSuccess) return;
+
+    final tasksResult = await _fetchTasksUsecase.execute();
+    tasksResult.fold(
+      (_) => emit(
+        state.copyWith(
+          status: TaskListStatus.initial,
+          errorMessage: 'Dữ liệu chưa được sync!',
+        ),
+      ),
+      (_) {},
+    );
   }
 
   void _emitTaskDisplays() {
@@ -67,32 +92,6 @@ class TaskListCubit extends Cubit<TaskListState> {
     emit(
       state.copyWith(taskDisplays: displays, status: TaskListStatus.success),
     );
-  }
-
-  Future<void> _fetchTasks() async {
-    emit(state.copyWith(status: TaskListStatus.syncing));
-    final result = await _fetchTasksUsecase.execute();
-    result.fold((failure) {
-      emit(
-        state.copyWith(
-          status: TaskListStatus.initial,
-          errorMessage: 'Dữ liệu chưa được sync!',
-        ),
-      );
-    }, (_) {});
-  }
-
-  Future<void> _fecthCategories() async {
-    emit(state.copyWith(status: TaskListStatus.syncing));
-    final result = await _fetchCategoriesUseCase.execute();
-    result.fold((faliure) {
-      emit(
-        state.copyWith(
-          status: TaskListStatus.initial,
-          errorMessage: 'Dữ liệu chưa được sync!',
-        ),
-      );
-    }, (_) {});
   }
 
   Future<void> addTask(Task task) async {

@@ -15,6 +15,7 @@ abstract class AppColors {
   static const bottomAppBar = Color(0xFF363636);
   static const card = Color(0xFF272727);
   static const cardTask = Color(0xFF363636);
+  static const cardSecond = Color(0x36FFFFFF);
   //Button
   static const button = Color(0xFF8687E7);
   static const buttonDisabled = Color(0x808687E7);

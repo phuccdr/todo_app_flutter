@@ -38,7 +38,9 @@ class TaskRepositoryImpl implements TaskRepository {
   Future<Either<Failure, void>> insertTask(Task task) async {
     try {
       final taskId = uuid.v4();
-      final taskModel = TaskModel.fromEntity(task.copyWith(id: taskId));
+      final taskModel = TaskModel.fromEntity(
+        task.copyWith(id: taskId.toString()),
+      );
       final resultLocal = await _localDataSource.upsertTask(taskModel);
 
       if (resultLocal.isLeft()) {
@@ -64,6 +66,7 @@ class TaskRepositoryImpl implements TaskRepository {
     try {
       final taskModel = TaskModel.fromEntity(task);
       await _localDataSource.upsertTask(taskModel);
+      await _remoteDatasource.updateTask(taskModel);
       return const Right(null);
     } catch (e) {
       return Left(Failure(message: e.toString()));

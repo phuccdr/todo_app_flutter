@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
 import 'package:todoapp/core/di/injection.dart';
+import 'package:todoapp/core/router/app_router.dart';
 import 'package:todoapp/core/theme/app_text_style.dart';
 import 'package:todoapp/presentation/cubit/register/register_cubit.dart';
 import 'package:todoapp/presentation/cubit/register/register_state.dart';
@@ -44,7 +45,7 @@ class _RegisterView extends StatelessWidget {
             padding: const EdgeInsets.only(left: 24),
             child: IconButton(
               onPressed: () {
-                context.pop();
+                context.go(AppRoutes.login);
               },
               icon: const Icon(Icons.arrow_back_ios),
             ),
@@ -54,19 +55,30 @@ class _RegisterView extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 16),
-                const Text('Register', style: AppTextStyle.titleLarge),
-                const SizedBox(height: 52),
-                _buildUserNameTextField(),
-                const SizedBox(height: 24),
-                _buildPasswordTextField(),
-                const SizedBox(height: 24),
-                _buildConfirmPasswordTextField(),
-                const SizedBox(height: 40),
-                _buildButtonSubmit(),
-                const Spacer(),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Register',
+                          style: AppTextStyle.titleLarge,
+                          textAlign: TextAlign.left,
+                        ),
+                        const SizedBox(height: 52),
+                        _buildUserNameTextField(),
+                        const SizedBox(height: 24),
+                        _buildPasswordTextField(),
+                        const SizedBox(height: 24),
+                        _buildConfirmPasswordTextField(),
+                        const SizedBox(height: 40),
+                        _buildButtonSubmit(),
+                      ],
+                    ),
+                  ),
+                ),
                 TwoTextSpan(
                   firstText: "Already have an account?",
                   secondText: " Login",
@@ -149,11 +161,11 @@ class _RegisterView extends StatelessWidget {
   }
 
   void _onLoginClick(BuildContext context) {
-    context.pop();
+    context.go(AppRoutes.login);
   }
 
   void _onRegisterSuccess(BuildContext context) {
-    context.pop();
+    context.go(AppRoutes.login);
   }
 
   void _showLoading() {

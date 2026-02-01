@@ -11,7 +11,7 @@ abstract class AppRoutes {
   static const login = '/login';
   static const register = '/register';
   static const home = '/home';
-  static const detailTask = '/detailTask:taskId';
+  static const detailTask = '/detailTask/:taskId';
 }
 
 /// Listenable wrapper cho AuthCubit để GoRouter có thể lắng nghe state changes

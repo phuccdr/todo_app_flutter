@@ -4,7 +4,7 @@ import 'package:todoapp/domain/entities/sync_status.dart';
 class Task {
   final String id;
   final String title;
-  final String? description;
+  final String description;
   final DateTime? taskTime;
   final String? categoryId;
   final Priority? priority;
@@ -45,4 +45,20 @@ class Task {
       syncStatus: syncStatus ?? this.syncStatus,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Task &&
+          id == other.id &&
+          title == other.title &&
+          description == other.description &&
+          taskTime == other.taskTime &&
+          categoryId == other.categoryId &&
+          priority == other.priority &&
+          isCompleted == other.isCompleted;
+
+  @override
+  int get hashCode =>
+      Object.hash(id, title, description, taskTime, categoryId, priority, isCompleted);
 }

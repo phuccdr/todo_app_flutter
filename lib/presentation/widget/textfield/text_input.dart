@@ -9,6 +9,7 @@ class TextInput extends StatelessWidget {
   final Function(String value)? onChanged;
   final bool isValid;
   final String errorText;
+  final TextEditingController? controller;
 
   const TextInput({
     super.key,
@@ -18,6 +19,7 @@ class TextInput extends StatelessWidget {
     this.isValid = false,
     this.onChanged,
     this.errorText = '',
+    this.controller,
   });
 
   @override
@@ -26,6 +28,7 @@ class TextInput extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextField(
+          controller: controller,
           onChanged: onChanged,
           style: AppTextStyle.bodyMedium.copyWith(
             color: isValid ? textFocusColor : textUnfocusColor,

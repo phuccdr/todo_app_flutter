@@ -6,16 +6,29 @@ import 'package:todoapp/core/utils/validator/text_input_validator.dart';
 import 'package:todoapp/domain/entities/category.dart';
 import 'package:todoapp/domain/entities/priority.dart';
 import 'package:todoapp/domain/entities/task.dart';
+import 'package:todoapp/domain/usecase/delete_task_usecase.dart';
+import 'package:todoapp/domain/usecase/get_category_by_id_usecase.dart';
 import 'package:todoapp/domain/usecase/get_task_by_id_usecase.dart';
 import 'package:todoapp/domain/usecase/insert_task_usecase.dart';
+import 'package:todoapp/domain/usecase/update_task_usecase.dart';
 import 'package:todoapp/presentation/cubit/task/add_task/add_task_state.dart';
+import 'package:todoapp/presentation/model/task_display.dart';
 
 @injectable
 class AddTaskCubit extends Cubit<AddTaskState> {
   final InsertTaskUsecase _insertTaskUsecase;
   final GetTaskByIdUsecase _getTaskByIdUsecase;
-  AddTaskCubit(this._insertTaskUsecase, this._getTaskByIdUsecase)
-    : super(const AddTaskState());
+  final GetCategoryByIdUsecase _getCategoryByIdUsecase;
+  final DeleteTaskUsecase _deleteTaskUsecase;
+  final UpdateTaskUsecase _updateTaskUsecase;
+
+  AddTaskCubit(
+    this._insertTaskUsecase,
+    this._getTaskByIdUsecase,
+    this._getCategoryByIdUsecase,
+    this._deleteTaskUsecase,
+    this._updateTaskUsecase,
+  ) : super(const AddTaskState());
 
   void onTitleChanged(String value) {
     final titleValidator = TextInputValidator.dirty(value);
@@ -35,6 +48,13 @@ class AddTaskCubit extends Cubit<AddTaskState> {
   void onTimeTaskChanged(DateTime value) {
     final timeTaskValidator = NotNullValidator<DateTime>.dirty(value);
     emit(state.copyWith(timeTaskValidator: timeTaskValidator));
+  }
+
+  void onUpdateTimeTask(DateTime value) {
+    final updatedTask = state.initialTask?.task.copyWith(taskTime: value);
+    emit(
+      state.copyWith(initial: state.initialTask?.copyWith(task: updatedTask)),
+    );
   }
 
   void onPriorityChanged(Priority value) {
@@ -70,16 +90,78 @@ class AddTaskCubit extends Cubit<AddTaskState> {
     return;
   }
 
-  void getTaskById(String taskId) async {
+  Future<void> getTaskById(String taskId) async {
     emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
+
     final result = await _getTaskByIdUsecase.excute(taskId);
+    final task = result.fold((_) => null, (t) => t);
+    if (task == null) {
+      emit(state.copyWith(status: FormzSubmissionStatus.failure));
+      return;
+    }
+
+    Category? category;
+    final categoryId = task.categoryId;
+    if (categoryId != null && categoryId.isNotEmpty) {
+      final categoryResult = await _getCategoryByIdUsecase.excute(categoryId);
+      category = categoryResult.fold((_) => null, (c) => c);
+    }
+
+    final taskDisplay = TaskDisplay(task: task, category: category);
+    emit(
+      state.copyWith(
+        status: FormzSubmissionStatus.initial,
+        initial: taskDisplay,
+        initialTaskSnapshot: taskDisplay,
+      ),
+    );
+  }
+
+  void onUpdateTileTask(String title, String description) {
+    final updatedTask = state.initialTask?.task.copyWith(
+      title: title,
+      description: description,
+    );
+    final updatedDisplayTask = state.initialTask?.copyWith(task: updatedTask);
+    emit(state.copyWith(initial: updatedDisplayTask));
+  }
+
+  void onUpdateCategoryTask(Category? category) {
+    final updatedTaskDisplay = state.initialTask?.copyWith(category: category);
+    emit(state.copyWith(initial: updatedTaskDisplay));
+  }
+
+  void onUpdatePriorityTask(Priority? priority) {
+    final updatedTask = state.initialTask?.task.copyWith(priority: priority);
+    final updatedDisplayTask = state.initialTask?.copyWith(task: updatedTask);
+    emit(state.copyWith(initial: updatedDisplayTask));
+  }
+
+  Future<void> onEditTask() async {
+    emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
+    final task = state.initialTask?.task;
+    if (task == null || task.id.isEmpty) return;
+
+    final currentDisplay = state.initialTask;
+    final initialSnapshot = state.initialTaskSnapshot;
+    if (currentDisplay == initialSnapshot) {
+      emit(state.copyWith(status: FormzSubmissionStatus.success));
+      return;
+    }
+
+    final result = await _updateTaskUsecase.execute(task);
     result.fold(
-      (e) {
-        emit(state.copyWith(status: FormzSubmissionStatus.failure));
-      },
-      (task) {
-        emit(state.copyWith(initial: task));
-      },
+      (_) => emit(state.copyWith(status: FormzSubmissionStatus.failure)),
+      (_) => emit(state.copyWith(status: FormzSubmissionStatus.success)),
+    );
+  }
+
+  Future<void> deleteTask(String taskId) async {
+    emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
+    final result = await _deleteTaskUsecase.execute(taskId);
+    result.fold(
+      (_) => emit(state.copyWith(status: FormzSubmissionStatus.failure)),
+      (_) => emit(state.copyWith(status: FormzSubmissionStatus.success)),
     );
   }
 

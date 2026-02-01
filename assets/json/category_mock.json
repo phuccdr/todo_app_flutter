@@ -1,0 +1,56 @@
+[
+  {
+    "id": "cat_001",
+    "name": "Ăn uống",
+    "color": "#FF5722",
+    "icon": "https://storage.freeicon.com/free-dumbbell-icon-b_PS03cctrOr"
+  },
+  {
+    "id": "cat_002",
+    "name": "Di chuyển",
+    "color": "#2196F3",
+    "icon": "https://storage.freeicon.com/free-clouds-icon-xFmh3YxjQ_2N"
+  },
+  {
+    "id": "cat_003",
+    "name": "Giải trí",
+    "color": "#9C27B0",
+    "icon": "movie"
+  },
+  {
+    "id": "cat_004",
+    "name": "Mua sắm",
+    "color": "#4CAF50",
+    "icon": "https://storage.freeicon.com/free-cloud-icon-Yz2IZ5WZf1I1"
+  },
+  {
+    "id": "cat_005",
+    "name": "Học tập",
+    "color": "#3F51B5",
+    "icon": "https://storage.freeicon.com/free-instagram-icon-CCSHWVW5O8tQ"
+  },
+  {
+    "id": "cat_006",
+    "name": "Sức khỏe",
+    "color": "#E91E63",
+    "icon": "https://storage.freeicon.com/free-dumbbell-icon-b_PS03cctrOr"
+  },
+  {
+    "id": "cat_007",
+    "name": "Gia đình",
+    "color": "#795548",
+    "icon": "https://storage.freeicon.com/free-dumbbell-icon-b_PS03cctrOr"
+  },
+  {
+    "id": "cat_008",
+    "name": "Công việc",
+    "color": "#607D8B",
+    "icon": "https://storage.freeicon.com/free-dumbbell-icon-b_PS03cctrOr"
+  },
+  {
+    "id": "cat_009",
+    "name": "Du lịch",
+    "color": "#009688",
+    "icon": "https://storage.freeicon.com/free-dumbbell-icon-b_PS03cctrOr"
+  }
+]

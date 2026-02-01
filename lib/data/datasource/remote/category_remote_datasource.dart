@@ -1,15 +1,19 @@
-import 'package:dio/dio.dart';
+import 'dart:convert';
+
+import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
 import 'package:todoapp/data/models/category_model.dart';
 
 @LazySingleton()
 class CategoryRemoteDatasource {
-  final Dio _dio;
-  CategoryRemoteDatasource(this._dio);
+  static const String _categoryMockPath = 'assets/json/category_mock.json';
+
   Future<List<CategoryModel>> getCategories() async {
-    final response = await _dio.get('/categories');
-    return (response.data as List)
-        .map((json) => CategoryModel.fromJson(json as Map<String, dynamic>))
+    final String jsonString =
+        await rootBundle.loadString(_categoryMockPath);
+    final List<dynamic> jsonList = jsonDecode(jsonString) as List<dynamic>;
+    return jsonList
+        .map((e) => CategoryModel.fromJson(e as Map<String, dynamic>))
         .toList();
   }
 }

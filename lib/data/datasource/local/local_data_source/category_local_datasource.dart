@@ -26,4 +26,10 @@ class CategoryLocalDatasource {
           driftCategories.map((c) => CategoryModel.fromDrift(c)).toList(),
     );
   }
+
+  Future<CategoryModel?> getCategoryById(String categoryId) async {
+    final result = await _categoryDao.getCategoryById(categoryId);
+    if (result == null) return null;
+    return CategoryModel.fromDrift(result);
+  }
 }

@@ -32,7 +32,7 @@ class TaskModel {
 
   factory TaskModel.fromJson(Map<String, dynamic> json) {
     return TaskModel(
-      id: json['id'] as String,
+      id: json['localId']?.toString() ?? '',
       title: json['title'] as String,
       description: json['description'] as String,
       taskTime: DateTime.parse(json['taskTime']),
@@ -47,7 +47,7 @@ class TaskModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'localId': id,
       'title': title,
       'description': description,
       'taskTime': taskTime.toIso8601String(),

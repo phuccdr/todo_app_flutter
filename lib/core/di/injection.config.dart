@@ -46,12 +46,17 @@ import 'package:todoapp/domain/repositories/category_repository/category_reposit
     as _i872;
 import 'package:todoapp/domain/repositories/task_repository/task_repository.dart'
     as _i560;
+import 'package:todoapp/domain/usecase/delete_task_usecase.dart' as _i619;
 import 'package:todoapp/domain/usecase/fetch_categories_usecase.dart' as _i369;
 import 'package:todoapp/domain/usecase/fetch_tasks_usecase.dart' as _i504;
+import 'package:todoapp/domain/usecase/get_category_by_id_usecase.dart'
+    as _i261;
+import 'package:todoapp/domain/usecase/get_task_by_id_usecase.dart' as _i233;
 import 'package:todoapp/domain/usecase/get_user_usecase.dart' as _i319;
 import 'package:todoapp/domain/usecase/insert_task_usecase.dart' as _i367;
 import 'package:todoapp/domain/usecase/login_usecase.dart' as _i209;
 import 'package:todoapp/domain/usecase/register_usecase.dart' as _i435;
+import 'package:todoapp/domain/usecase/update_task_usecase.dart' as _i421;
 import 'package:todoapp/domain/usecase/watch_categories_usecase.dart' as _i45;
 import 'package:todoapp/domain/usecase/watch_task_usecase.dart' as _i932;
 import 'package:todoapp/presentation/cubit/auth/auth_cubit.dart' as _i602;
@@ -84,6 +89,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i361.Dio>(() => appModule.dio);
     gh.lazySingleton<_i850.AppDatabase>(() => appModule.database);
+    gh.lazySingleton<_i955.CategoryRemoteDatasource>(
+      () => _i955.CategoryRemoteDatasource(),
+    );
     gh.factory<_i614.RegisterState>(
       () => _i614.RegisterState(
         nameValidator: gh<_i703.NameValidator>(),
@@ -94,16 +102,13 @@ extension GetItInjectableX on _i174.GetIt {
       ),
     );
     gh.lazySingleton<_i107.CategoryDao>(
-      () => appModule.categoryDao(gh<_i850.AppDatabase>()),
+      () => _i107.CategoryDao(gh<_i850.AppDatabase>()),
     );
     gh.lazySingleton<_i782.TaskDao>(
-      () => appModule.taskDao(gh<_i850.AppDatabase>()),
+      () => _i782.TaskDao(gh<_i850.AppDatabase>()),
     );
     gh.lazySingleton<_i411.AuthRemoteDataSource>(
       () => _i411.AuthRemoteDataSource(gh<_i361.Dio>()),
-    );
-    gh.lazySingleton<_i955.CategoryRemoteDatasource>(
-      () => _i955.CategoryRemoteDatasource(gh<_i361.Dio>()),
     );
     gh.lazySingleton<_i290.TaskRemoteDatasource>(
       () => _i290.TaskRemoteDatasource(gh<_i361.Dio>()),
@@ -148,6 +153,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i369.FetchCategoriesUseCase>(
       () => _i369.FetchCategoriesUseCase(gh<_i872.CategoryRepository>()),
     );
+    gh.factory<_i261.GetCategoryByIdUsecase>(
+      () => _i261.GetCategoryByIdUsecase(gh<_i872.CategoryRepository>()),
+    );
     gh.factory<_i45.WatchCategoriesUsecase>(
       () => _i45.WatchCategoriesUsecase(gh<_i872.CategoryRepository>()),
     );
@@ -178,11 +186,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i602.AuthCubit>(
       () => _i602.AuthCubit(gh<_i319.GetUserUsecase>()),
     );
+    gh.factory<_i619.DeleteTaskUsecase>(
+      () => _i619.DeleteTaskUsecase(gh<_i560.TaskRepository>()),
+    );
+    gh.factory<_i233.GetTaskByIdUsecase>(
+      () => _i233.GetTaskByIdUsecase(gh<_i560.TaskRepository>()),
+    );
     gh.factory<_i367.InsertTaskUsecase>(
       () => _i367.InsertTaskUsecase(gh<_i560.TaskRepository>()),
     );
-    gh.factory<_i284.AddTaskCubit>(
-      () => _i284.AddTaskCubit(gh<_i367.InsertTaskUsecase>()),
+    gh.factory<_i421.UpdateTaskUsecase>(
+      () => _i421.UpdateTaskUsecase(gh<_i560.TaskRepository>()),
     );
     gh.factory<_i895.CategoryCubit>(
       () => _i895.CategoryCubit(
@@ -200,6 +214,15 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i709.LoginCubit>(
       () => _i709.LoginCubit(gh<_i209.LoginUsecase>()),
+    );
+    gh.factory<_i284.AddTaskCubit>(
+      () => _i284.AddTaskCubit(
+        gh<_i367.InsertTaskUsecase>(),
+        gh<_i233.GetTaskByIdUsecase>(),
+        gh<_i261.GetCategoryByIdUsecase>(),
+        gh<_i619.DeleteTaskUsecase>(),
+        gh<_i421.UpdateTaskUsecase>(),
+      ),
     );
     return this;
   }

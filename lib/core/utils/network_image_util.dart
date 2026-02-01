@@ -3,16 +3,17 @@ import 'package:flutter/material.dart';
 
 class NetworkImageUtil {
   static Widget load(
-    String url, {
+    String? url, {
     double? width,
     double? height,
     BoxFit fit = BoxFit.cover,
     BorderRadius? borderRadius,
     Widget? placeholder,
     Widget? errorWidget,
+    Color? color,
   }) {
     final image = CachedNetworkImage(
-      imageUrl: url,
+      imageUrl: url ?? '',
       width: width,
       height: height,
       fit: fit,
@@ -21,6 +22,7 @@ class NetworkImageUtil {
           const Center(child: CircularProgressIndicator(strokeWidth: 2)),
       errorWidget: (context, _, _) =>
           errorWidget ?? const Icon(Icons.broken_image),
+      color: color,
     );
 
     if (borderRadius != null) {
