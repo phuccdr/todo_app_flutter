@@ -127,7 +127,13 @@ class AddTaskCubit extends Cubit<AddTaskState> {
   }
 
   void onUpdateCategoryTask(Category? category) {
-    final updatedTaskDisplay = state.initialTask?.copyWith(category: category);
+    final updatedTask = state.initialTask?.task.copyWith(
+      categoryId: category?.id,
+    );
+    final updatedTaskDisplay = state.initialTask?.copyWith(
+      category: category,
+      task: updatedTask,
+    );
     emit(state.copyWith(initial: updatedTaskDisplay));
   }
 

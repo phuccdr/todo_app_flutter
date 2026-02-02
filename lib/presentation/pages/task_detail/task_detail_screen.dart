@@ -13,11 +13,11 @@ import 'package:todoapp/presentation/cubit/task/add_task/add_task_cubit.dart';
 import 'package:todoapp/presentation/cubit/task/add_task/add_task_state.dart';
 import 'package:todoapp/presentation/model/task_display.dart';
 import 'package:todoapp/presentation/widget/button/button_submit.dart';
-import 'package:todoapp/presentation/widget/choose_category/choose_category_dialog.dart';
-import 'package:todoapp/presentation/widget/confirm_delete_task.dart';
-import 'package:todoapp/presentation/widget/edit_task_title_dialog.dart';
-import 'package:todoapp/presentation/widget/priority/priority_picker_dialog.dart';
-import 'package:todoapp/presentation/widget/time_picker/task_time_picker.dart';
+import 'package:todoapp/presentation/widget/dialog/choose_category_dialog.dart';
+import 'package:todoapp/presentation/widget/dialog/confirm_delete_task.dart';
+import 'package:todoapp/presentation/widget/dialog/edit_task_title_dialog.dart';
+import 'package:todoapp/presentation/widget/dialog/priority_picker_dialog.dart';
+import 'package:todoapp/presentation/widget/dialog/task_time_picker.dart';
 
 class TaskDetailScreen extends StatelessWidget {
   final String taskId;

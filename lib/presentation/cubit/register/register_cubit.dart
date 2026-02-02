@@ -28,13 +28,17 @@ class RegisterCubit extends Cubit<RegisterState> {
 
   void onPasswordChange(String value) {
     final passwordValidator = PasswordValidator.dirty(value);
+    final confirmPasswordValidator = ConfirmPasswordValidator.dirty(
+      password: value,
+      value: state.confirmPasswordValidator.value,
+    );
     emit(
       state.copyWith(
         passwordValidator: passwordValidator,
         isValid: Formz.validate([
           state.nameValidator,
           passwordValidator,
-          state.confirmPasswordValidator,
+          confirmPasswordValidator,
         ]),
       ),
     );

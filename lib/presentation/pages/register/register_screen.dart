@@ -41,13 +41,13 @@ class _RegisterView extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 24),
-            child: IconButton(
-              onPressed: () {
-                context.go(AppRoutes.login);
-              },
-              icon: const Icon(Icons.arrow_back_ios),
+          leading: GestureDetector(
+            onTap: () {
+              context.go(AppRoutes.login);
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(left: 12),
+              child: const Icon(Icons.arrow_back_ios, size: 24),
             ),
           ),
         ),
@@ -157,7 +157,7 @@ class _RegisterView extends StatelessWidget {
   }
 
   void _onRegisterSubmit(BuildContext context) {
-    // TODO: Implement register logic
+    context.read<RegisterCubit>().onRegister();
   }
 
   void _onLoginClick(BuildContext context) {

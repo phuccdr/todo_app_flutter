@@ -44,33 +44,36 @@ class _LoginView extends StatelessWidget {
       },
       child: Scaffold(
         body: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: 20,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 56),
-                  const Text('Login', style: AppTextStyle.titleLarge),
-                  const SizedBox(height: 52),
-                  _buildUserNameTextField(),
-                  const SizedBox(height: 24),
-                  _buildPasswordTextField(),
-                  const SizedBox(height: 68),
-                  _buildButtonSubmit(),
-                  const SizedBox(height: 248),
-                  TwoTextSpan(
-                    firstText: "Don't have an account?",
-                    secondText: " Register",
-                    onSecondTextClick: () {
-                      context.push(AppRoutes.register);
-                    },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 56),
+                        const Text('Login', style: AppTextStyle.titleLarge),
+                        const SizedBox(height: 52),
+                        _buildUserNameTextField(),
+                        const SizedBox(height: 24),
+                        _buildPasswordTextField(),
+                        const SizedBox(height: 68),
+                        _buildButtonSubmit(),
+                        const SizedBox(height: 248),
+                      ],
+                    ),
                   ),
-                ],
-              ),
+                ),
+                TwoTextSpan(
+                  firstText: "Don't have an account?",
+                  secondText: " Register",
+                  onSecondTextClick: () {
+                    context.push(AppRoutes.register);
+                  },
+                ),
+              ],
             ),
           ),
         ),

@@ -365,6 +365,17 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _remoteIdMeta = const VerificationMeta(
+    'remoteId',
+  );
+  @override
+  late final GeneratedColumn<String> remoteId = GeneratedColumn<String>(
+    'remote_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
   late final GeneratedColumn<String> title = GeneratedColumn<String>(
@@ -474,6 +485,7 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    remoteId,
     title,
     description,
     taskTime,
@@ -500,6 +512,12 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('remote_id')) {
+      context.handle(
+        _remoteIdMeta,
+        remoteId.isAcceptableOrUnknown(data['remote_id']!, _remoteIdMeta),
+      );
     }
     if (data.containsKey('title')) {
       context.handle(
@@ -576,6 +594,10 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
         DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
+      remoteId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_id'],
+      ),
       title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}title'],
@@ -628,6 +650,7 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
 
 class Task extends DataClass implements Insertable<Task> {
   final String id;
+  final String? remoteId;
   final String title;
   final String description;
   final DateTime taskTime;
@@ -639,6 +662,7 @@ class Task extends DataClass implements Insertable<Task> {
   final SyncStatus syncStatus;
   const Task({
     required this.id,
+    this.remoteId,
     required this.title,
     required this.description,
     required this.taskTime,
@@ -653,6 +677,9 @@ class Task extends DataClass implements Insertable<Task> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    if (!nullToAbsent || remoteId != null) {
+      map['remote_id'] = Variable<String>(remoteId);
+    }
     map['title'] = Variable<String>(title);
     map['description'] = Variable<String>(description);
     map['task_time'] = Variable<DateTime>(taskTime);
@@ -672,6 +699,9 @@ class Task extends DataClass implements Insertable<Task> {
   TasksCompanion toCompanion(bool nullToAbsent) {
     return TasksCompanion(
       id: Value(id),
+      remoteId: remoteId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remoteId),
       title: Value(title),
       description: Value(description),
       taskTime: Value(taskTime),
@@ -691,6 +721,7 @@ class Task extends DataClass implements Insertable<Task> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Task(
       id: serializer.fromJson<String>(json['id']),
+      remoteId: serializer.fromJson<String?>(json['remoteId']),
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String>(json['description']),
       taskTime: serializer.fromJson<DateTime>(json['taskTime']),
@@ -709,6 +740,7 @@ class Task extends DataClass implements Insertable<Task> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'remoteId': serializer.toJson<String?>(remoteId),
       'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String>(description),
       'taskTime': serializer.toJson<DateTime>(taskTime),
@@ -725,6 +757,7 @@ class Task extends DataClass implements Insertable<Task> {
 
   Task copyWith({
     String? id,
+    Value<String?> remoteId = const Value.absent(),
     String? title,
     String? description,
     DateTime? taskTime,
@@ -736,6 +769,7 @@ class Task extends DataClass implements Insertable<Task> {
     SyncStatus? syncStatus,
   }) => Task(
     id: id ?? this.id,
+    remoteId: remoteId.present ? remoteId.value : this.remoteId,
     title: title ?? this.title,
     description: description ?? this.description,
     taskTime: taskTime ?? this.taskTime,
@@ -749,6 +783,7 @@ class Task extends DataClass implements Insertable<Task> {
   Task copyWithCompanion(TasksCompanion data) {
     return Task(
       id: data.id.present ? data.id.value : this.id,
+      remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
       title: data.title.present ? data.title.value : this.title,
       description: data.description.present
           ? data.description.value
@@ -773,6 +808,7 @@ class Task extends DataClass implements Insertable<Task> {
   String toString() {
     return (StringBuffer('Task(')
           ..write('id: $id, ')
+          ..write('remoteId: $remoteId, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
           ..write('taskTime: $taskTime, ')
@@ -789,6 +825,7 @@ class Task extends DataClass implements Insertable<Task> {
   @override
   int get hashCode => Object.hash(
     id,
+    remoteId,
     title,
     description,
     taskTime,
@@ -804,6 +841,7 @@ class Task extends DataClass implements Insertable<Task> {
       identical(this, other) ||
       (other is Task &&
           other.id == this.id &&
+          other.remoteId == this.remoteId &&
           other.title == this.title &&
           other.description == this.description &&
           other.taskTime == this.taskTime &&
@@ -817,6 +855,7 @@ class Task extends DataClass implements Insertable<Task> {
 
 class TasksCompanion extends UpdateCompanion<Task> {
   final Value<String> id;
+  final Value<String?> remoteId;
   final Value<String> title;
   final Value<String> description;
   final Value<DateTime> taskTime;
@@ -829,6 +868,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
   final Value<int> rowid;
   const TasksCompanion({
     this.id = const Value.absent(),
+    this.remoteId = const Value.absent(),
     this.title = const Value.absent(),
     this.description = const Value.absent(),
     this.taskTime = const Value.absent(),
@@ -842,6 +882,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
   });
   TasksCompanion.insert({
     required String id,
+    this.remoteId = const Value.absent(),
     required String title,
     required String description,
     required DateTime taskTime,
@@ -859,6 +900,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
        categoryId = Value(categoryId);
   static Insertable<Task> custom({
     Expression<String>? id,
+    Expression<String>? remoteId,
     Expression<String>? title,
     Expression<String>? description,
     Expression<DateTime>? taskTime,
@@ -872,6 +914,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (remoteId != null) 'remote_id': remoteId,
       if (title != null) 'title': title,
       if (description != null) 'description': description,
       if (taskTime != null) 'task_time': taskTime,
@@ -887,6 +930,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
 
   TasksCompanion copyWith({
     Value<String>? id,
+    Value<String?>? remoteId,
     Value<String>? title,
     Value<String>? description,
     Value<DateTime>? taskTime,
@@ -900,6 +944,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
   }) {
     return TasksCompanion(
       id: id ?? this.id,
+      remoteId: remoteId ?? this.remoteId,
       title: title ?? this.title,
       description: description ?? this.description,
       taskTime: taskTime ?? this.taskTime,
@@ -918,6 +963,9 @@ class TasksCompanion extends UpdateCompanion<Task> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (remoteId.present) {
+      map['remote_id'] = Variable<String>(remoteId.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -958,6 +1006,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
   String toString() {
     return (StringBuffer('TasksCompanion(')
           ..write('id: $id, ')
+          ..write('remoteId: $remoteId, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
           ..write('taskTime: $taskTime, ')
@@ -1282,6 +1331,7 @@ typedef $$CategoriesTableProcessedTableManager =
 typedef $$TasksTableCreateCompanionBuilder =
     TasksCompanion Function({
       required String id,
+      Value<String?> remoteId,
       required String title,
       required String description,
       required DateTime taskTime,
@@ -1296,6 +1346,7 @@ typedef $$TasksTableCreateCompanionBuilder =
 typedef $$TasksTableUpdateCompanionBuilder =
     TasksCompanion Function({
       Value<String> id,
+      Value<String?> remoteId,
       Value<String> title,
       Value<String> description,
       Value<DateTime> taskTime,
@@ -1340,6 +1391,11 @@ class $$TasksTableFilterComposer extends Composer<_$AppDatabase, $TasksTable> {
   });
   ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1422,6 +1478,11 @@ class $$TasksTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get title => $composableBuilder(
     column: $table.title,
     builder: (column) => ColumnOrderings(column),
@@ -1497,6 +1558,9 @@ class $$TasksTableAnnotationComposer
   });
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get remoteId =>
+      $composableBuilder(column: $table.remoteId, builder: (column) => column);
 
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
@@ -1582,6 +1646,7 @@ class $$TasksTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String> description = const Value.absent(),
                 Value<DateTime> taskTime = const Value.absent(),
@@ -1594,6 +1659,7 @@ class $$TasksTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => TasksCompanion(
                 id: id,
+                remoteId: remoteId,
                 title: title,
                 description: description,
                 taskTime: taskTime,
@@ -1608,6 +1674,7 @@ class $$TasksTableTableManager
           createCompanionCallback:
               ({
                 required String id,
+                Value<String?> remoteId = const Value.absent(),
                 required String title,
                 required String description,
                 required DateTime taskTime,
@@ -1620,6 +1687,7 @@ class $$TasksTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => TasksCompanion.insert(
                 id: id,
+                remoteId: remoteId,
                 title: title,
                 description: description,
                 taskTime: taskTime,

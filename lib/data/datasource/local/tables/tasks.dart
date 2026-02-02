@@ -4,6 +4,7 @@ import 'package:todoapp/domain/entities/sync_status.dart';
 
 class Tasks extends Table {
   TextColumn get id => text()();
+  TextColumn get remoteId => text().nullable()();
   TextColumn get title => text()();
   TextColumn get description => text()();
   DateTimeColumn get taskTime => dateTime()();

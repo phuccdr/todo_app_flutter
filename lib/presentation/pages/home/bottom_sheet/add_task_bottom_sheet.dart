@@ -7,10 +7,10 @@ import 'package:todoapp/core/theme/app_colors.dart';
 import 'package:todoapp/core/theme/app_text_style.dart';
 import 'package:todoapp/presentation/cubit/task/add_task/add_task_cubit.dart';
 import 'package:todoapp/presentation/cubit/task/add_task/add_task_state.dart';
-import 'package:todoapp/presentation/widget/choose_category/choose_category_dialog.dart';
-import 'package:todoapp/presentation/widget/priority/priority_picker_dialog.dart';
+import 'package:todoapp/presentation/widget/dialog/choose_category_dialog.dart';
+import 'package:todoapp/presentation/widget/dialog/priority_picker_dialog.dart';
+import 'package:todoapp/presentation/widget/dialog/task_time_picker.dart';
 import 'package:todoapp/presentation/widget/textfield/text_input.dart';
-import 'package:todoapp/presentation/widget/time_picker/task_time_picker.dart';
 
 class AddTaskBottomSheet extends StatelessWidget {
   const AddTaskBottomSheet({super.key});

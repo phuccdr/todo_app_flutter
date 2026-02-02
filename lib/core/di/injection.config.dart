@@ -210,6 +210,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i369.FetchCategoriesUseCase>(),
         gh<_i932.WatchTaskUsecase>(),
         gh<_i45.WatchCategoriesUsecase>(),
+        gh<_i421.UpdateTaskUsecase>(),
       ),
     );
     gh.factory<_i709.LoginCubit>(

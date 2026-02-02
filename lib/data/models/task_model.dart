@@ -7,6 +7,7 @@ import '../../domain/entities/task.dart' as entity;
 
 class TaskModel {
   final String id;
+  final String? remoteId;
   final String title;
   final String description;
   final DateTime taskTime;
@@ -19,6 +20,7 @@ class TaskModel {
 
   TaskModel({
     required this.id,
+    this.remoteId,
     required this.title,
     required this.description,
     required this.taskTime,
@@ -33,6 +35,7 @@ class TaskModel {
   factory TaskModel.fromJson(Map<String, dynamic> json) {
     return TaskModel(
       id: json['localId']?.toString() ?? '',
+      remoteId: json['id']?.toString() ?? '',
       title: json['title'] as String,
       description: json['description'] as String,
       taskTime: DateTime.parse(json['taskTime']),
@@ -63,6 +66,7 @@ class TaskModel {
   entity.Task toEntity() {
     return entity.Task(
       id: id,
+      remoteId: remoteId,
       title: title,
       description: description,
       taskTime: taskTime,
@@ -80,10 +84,11 @@ class TaskModel {
   factory TaskModel.fromEntity(entity.Task task) {
     return TaskModel(
       id: task.id,
+      remoteId: task.remoteId,
       title: task.title,
-      description: task.description ?? '',
+      description: task.description,
       taskTime: task.taskTime ?? DateTime.now(),
-      categoryId: task.categoryId ?? '',
+      categoryId: task.categoryId ?? 'cat_008',
       priority: task.priority?.value ?? 1,
       isCompleted: task.isCompleted,
       createAt: task.createAt ?? DateTime.now(),
@@ -95,6 +100,7 @@ class TaskModel {
   factory TaskModel.fromDrift(Task driftTask) {
     return TaskModel(
       id: driftTask.id,
+      remoteId: driftTask.remoteId,
       title: driftTask.title,
       description: driftTask.description,
       taskTime: driftTask.taskTime,
@@ -110,6 +116,7 @@ class TaskModel {
   TasksCompanion toDriftCompanion() {
     return TasksCompanion(
       id: Value(id),
+      remoteId: Value(remoteId),
       title: Value(title),
       description: Value(description),
       taskTime: Value(taskTime),

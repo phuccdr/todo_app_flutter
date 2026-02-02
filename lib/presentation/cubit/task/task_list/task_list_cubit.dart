@@ -6,6 +6,7 @@ import 'package:todoapp/domain/entities/category.dart';
 import 'package:todoapp/domain/entities/task.dart';
 import 'package:todoapp/domain/usecase/fetch_categories_usecase.dart';
 import 'package:todoapp/domain/usecase/fetch_tasks_usecase.dart';
+import 'package:todoapp/domain/usecase/update_task_usecase.dart';
 import 'package:todoapp/domain/usecase/watch_categories_usecase.dart';
 import 'package:todoapp/domain/usecase/watch_task_usecase.dart';
 import 'package:todoapp/presentation/cubit/task/task_list/task_list_state.dart';
@@ -17,6 +18,7 @@ class TaskListCubit extends Cubit<TaskListState> {
   final FetchCategoriesUseCase _fetchCategoriesUseCase;
   final WatchTaskUsecase _watchTaskUsecase;
   final WatchCategoriesUsecase _watchCategoriesUsecase;
+  final UpdateTaskUsecase _updateTaskUsecase;
   StreamSubscription? _tasksSubscription;
   StreamSubscription? _categoriesSubscription;
 
@@ -28,6 +30,7 @@ class TaskListCubit extends Cubit<TaskListState> {
     this._fetchCategoriesUseCase,
     this._watchTaskUsecase,
     this._watchCategoriesUsecase,
+    this._updateTaskUsecase,
   ) : super(const TaskListState());
 
   void init() {
@@ -99,7 +102,9 @@ class TaskListCubit extends Cubit<TaskListState> {
   }
 
   Future<void> updateTask(Task task) async {
-    //emit(state.copyWith(status: TaskListStatus.syncing));
+    emit(state.copyWith(status: TaskListStatus.syncing));
+    await _updateTaskUsecase.execute(task);
+    emit(state.copyWith(status: TaskListStatus.success));
   }
 
   Future<void> deleteTask(String taskId) async {

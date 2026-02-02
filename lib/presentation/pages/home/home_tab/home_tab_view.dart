@@ -312,7 +312,7 @@ class _PriorityChip extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(4),
-        border: BoxBorder.all(color: AppColors.border, width: 1),
+        border: BoxBorder.all(color: AppColors.primary, width: 1),
       ),
       child: Row(
         children: [

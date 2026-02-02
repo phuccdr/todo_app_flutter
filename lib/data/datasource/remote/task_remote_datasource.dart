@@ -16,7 +16,7 @@ class TaskRemoteDatasource {
   }
 
   Future<void> updateTask(TaskModel task) async {
-    await _dio.put('/tasks/${task.id}', data: task.toJson());
+    await _dio.put('/tasks/${task.remoteId}', data: task.toJson());
   }
 
   Future<Either<Failure, void>> insertTask(TaskModel task) async {

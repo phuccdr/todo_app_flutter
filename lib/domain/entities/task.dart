@@ -4,6 +4,7 @@ import 'package:todoapp/domain/entities/sync_status.dart';
 class Task {
   final String id;
   final String title;
+  final String? remoteId;
   final String description;
   final DateTime? taskTime;
   final String? categoryId;
@@ -14,6 +15,7 @@ class Task {
 
   const Task({
     this.id = '',
+    this.remoteId = '',
     this.title = '',
     this.description = '',
     this.taskTime,
@@ -26,6 +28,7 @@ class Task {
 
   Task copyWith({
     String? id,
+    String? remoteId,
     String? title,
     String? description,
     DateTime? taskTime,
@@ -36,6 +39,7 @@ class Task {
   }) {
     return Task(
       id: id ?? this.id,
+      remoteId: remoteId ?? this.remoteId,
       title: title ?? this.title,
       description: description ?? this.description,
       taskTime: taskTime ?? this.taskTime,
@@ -51,6 +55,7 @@ class Task {
       identical(this, other) ||
       other is Task &&
           id == other.id &&
+          remoteId == other.remoteId &&
           title == other.title &&
           description == other.description &&
           taskTime == other.taskTime &&
@@ -59,6 +64,13 @@ class Task {
           isCompleted == other.isCompleted;
 
   @override
-  int get hashCode =>
-      Object.hash(id, title, description, taskTime, categoryId, priority, isCompleted);
+  int get hashCode => Object.hash(
+    id,
+    title,
+    description,
+    taskTime,
+    categoryId,
+    priority,
+    isCompleted,
+  );
 }

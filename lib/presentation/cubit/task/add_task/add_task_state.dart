@@ -62,9 +62,9 @@ class AddTaskState extends Equatable {
     final isValid = Formz.validate([
       newTitle,
       newDescription,
-      newTimeTask,
-      newPriority,
-      newCategory,
+      // newTimeTask,
+      // newPriority,
+      // newCategory,
     ]);
 
     return AddTaskState(
