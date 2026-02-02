@@ -13,14 +13,22 @@ class CategoryRepositoryImpl implements CategoryRepository {
   CategoryRepositoryImpl(this._remoteDatasource, this._localDataSource);
 
   @override
-  Future<Either<Failure, void>> fetchCategoriesFromServer() async {
-    try {
-      final remoteCategories = await _remoteDatasource.getCategories();
-      await _localDataSource.insertCategories(remoteCategories);
-      return Right(null);
-    } catch (e) {
-      return Left(Failure());
-    }
+  TaskEither<Failure, Unit> fetchCategoriesFromServer() {
+    return TaskEither.Do(($) async {
+      final remoteCategoies = await $(
+        TaskEither.tryCatch(
+          () => _remoteDatasource.getCategories(),
+          (e, _) => Failure(message: e.toString()),
+        ),
+      );
+      await $(
+        TaskEither.tryCatch(
+          () => _localDataSource.insertCategories(remoteCategoies),
+          (e, _) => Failure(message: e.toString()),
+        ),
+      );
+      return unit;
+    });
   }
 
   @override
@@ -31,12 +39,10 @@ class CategoryRepositoryImpl implements CategoryRepository {
   }
 
   @override
-  Future<Either<Failure, Category?>> getCategoryById(String categoryId) async {
-    try {
-      final result = await _localDataSource.getCategoryById(categoryId);
-      return Right(result?.toEntity());
-    } catch (e) {
-      return Left(Failure());
-    }
+  TaskEither<Failure, Category?> getCategoryById(String categoryId) {
+    return TaskEither.tryCatch(() async {
+      final model = await _localDataSource.getCategoryById(categoryId);
+      return model?.toEntity();
+    }, (e, _) => Failure(message: e.toString()));
   }
 }

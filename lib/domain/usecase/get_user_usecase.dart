@@ -9,6 +9,6 @@ class GetUserUsecase {
   final AuthRepository _authRepo;
   const GetUserUsecase(this._authRepo);
   Future<Either<Failure, User>> execute() {
-    return _authRepo.getUser();
+    return _authRepo.getUser().run();
   }
 }

@@ -3,7 +3,7 @@ import 'package:todoapp/core/error/failure.dart';
 import 'package:todoapp/domain/entities/category.dart';
 
 abstract class CategoryRepository {
-  Future<Either<Failure, void>> fetchCategoriesFromServer();
+  TaskEither<Failure, void> fetchCategoriesFromServer();
   Stream<Either<Failure, List<Category>>> watchCategories();
-  Future<Either<Failure, Category?>> getCategoryById(String categoryId);
+  TaskEither<Failure, Category?> getCategoryById(String categoryId);
 }

@@ -3,10 +3,10 @@ import 'package:todoapp/core/error/failure.dart';
 import 'package:todoapp/domain/entities/task.dart';
 
 abstract class TaskRepository {
-  Future<Either<Failure, void>> fetchTasksFromServer();
+  TaskEither<Failure, Unit> fetchTasksFromServer();
   Stream<Either<Failure, List<Task>>> watchTasks();
-  Future<Either<Failure, void>> insertTask(Task task);
-  Future<Either<Failure, void>> updateTask(Task task);
-  Future<Either<Failure, void>> deleteTask(Task task);
-  Future<Either<Failure, Task?>> getTaskById(String taskId);
+  TaskEither<Failure, Unit> insertTask(Task task);
+  TaskEither<Failure, Unit> updateTask(Task task);
+  TaskEither<Failure, Unit> deleteTask(Task task);
+  TaskEither<Failure, Task?> getTaskById(String taskId);
 }

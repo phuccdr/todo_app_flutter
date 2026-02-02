@@ -8,6 +8,9 @@ class RegisterUsecase {
   final AuthRepository _authRepo;
   const RegisterUsecase(this._authRepo);
   Future<Either<Failure, void>> excute(String email, String password) {
-    return _authRepo.register(email, password);
+    return _authRepo
+        .register(email, password)
+        .run()
+        .then((value) => value.map((_) {}));
   }
 }

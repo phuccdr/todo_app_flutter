@@ -8,6 +8,8 @@ class FetchTasksUsecase {
   final TaskRepository _taskRepository;
   FetchTasksUsecase(this._taskRepository);
   Future<Either<Failure, void>> execute() {
-    return _taskRepository.fetchTasksFromServer();
+    return _taskRepository.fetchTasksFromServer().run().then(
+      (either) => either.map((_) {}),
+    );
   }
 }

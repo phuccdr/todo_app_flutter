@@ -10,6 +10,6 @@ class GetCategoryByIdUsecase {
   GetCategoryByIdUsecase(this._categoryRepo);
 
   Future<Either<Failure, Category?>> excute(String categoryId) {
-    return _categoryRepo.getCategoryById(categoryId);
+    return _categoryRepo.getCategoryById(categoryId).run();
   }
 }

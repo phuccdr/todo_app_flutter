@@ -9,6 +9,9 @@ class DeleteTaskUsecase {
   final TaskRepository _taskRepo;
   const DeleteTaskUsecase(this._taskRepo);
   Future<Either<Failure, void>> execute(Task task) {
-    return _taskRepo.deleteTask(task);
+    return _taskRepo
+        .deleteTask(task)
+        .run()
+        .then((either) => either.map((_) {}));
   }
 }

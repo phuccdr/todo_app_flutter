@@ -12,7 +12,7 @@ class AuthRemoteDataSource {
     return UserModel.fromJson(response.data[0]);
   }
 
-  Future<bool> register(String email, String password) async {
+  Future<void> register(String email, String password) async {
     await _dio.post(
       '/login',
       data: {
@@ -23,6 +23,5 @@ class AuthRemoteDataSource {
         'password': password,
       },
     );
-    return true;
   }
 }

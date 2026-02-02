@@ -7,10 +7,9 @@ import 'package:todoapp/data/models/category_model.dart';
 @LazySingleton()
 class CategoryRemoteDatasource {
   static const String _categoryMockPath = 'assets/json/category_mock.json';
-
+  // Do MockAPi chỉ cho phép 2 resource nên em giả lập lấy file json ở assets.
   Future<List<CategoryModel>> getCategories() async {
     final String jsonString = await rootBundle.loadString(_categoryMockPath);
-    print('category: ${jsonString.toString()}');
     final List<dynamic> jsonList = jsonDecode(jsonString) as List<dynamic>;
     return jsonList
         .map((e) => CategoryModel.fromJson(e as Map<String, dynamic>))

@@ -1,7 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
-import 'package:todoapp/core/error/failure.dart';
 import 'package:todoapp/data/models/task_model.dart';
 
 @LazySingleton()
@@ -15,29 +13,15 @@ class TaskRemoteDatasource {
         .toList();
   }
 
-  Future<void> updateTask(TaskModel task) async {
-    await _dio.put('/tasks/${task.remoteId}', data: task.toJson());
+  Future<void> updateTask(TaskModel task) {
+    return _dio.put('/tasks/${task.remoteId}', data: task.toJson());
   }
 
-  Future<Either<Failure, void>> deleteTask(String taskId) async {
-    try {
-      final reponse = await _dio.delete('/tasks/$taskId');
-      if (reponse.statusCode == 200) {
-        return Right(null);
-      } else {
-        return Left(Failure());
-      }
-    } catch (e) {
-      return Left(Failure());
-    }
+  Future<void> deleteTask(String taskId) {
+    return _dio.delete('/tasks/$taskId');
   }
 
-  Future<Either<Failure, void>> insertTask(TaskModel task) async {
-    try {
-      await _dio.post('/tasks', data: task.toJson());
-      return Right(null);
-    } catch (e) {
-      return Left(Failure());
-    }
+  Future<void> insertTask(TaskModel task) {
+    return _dio.post('/tasks', data: task.toJson());
   }
 }

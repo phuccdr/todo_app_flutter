@@ -10,6 +10,9 @@ class UpdateTaskUsecase {
   const UpdateTaskUsecase(this._taskRepo);
 
   Future<Either<Failure, void>> execute(Task task) {
-    return _taskRepo.updateTask(task);
+    return _taskRepo
+        .updateTask(task)
+        .run()
+        .then((either) => either.map((_) {}));
   }
 }

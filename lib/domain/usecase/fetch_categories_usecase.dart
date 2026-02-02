@@ -10,6 +10,8 @@ class FetchCategoriesUseCase {
   final CategoryRepository _categoryRepository;
   FetchCategoriesUseCase(this._categoryRepository);
   Future<Either<Failure, void>> execute() {
-    return _categoryRepository.fetchCategoriesFromServer();
+    return _categoryRepository.fetchCategoriesFromServer().run().then(
+      (e) => e.map((_) {}),
+    );
   }
 }

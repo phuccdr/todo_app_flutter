@@ -9,6 +9,6 @@ class GetTaskByIdUsecase {
   final TaskRepository _taskRepo;
   const GetTaskByIdUsecase(this._taskRepo);
   Future<Either<Failure, Task?>> excute(String taskId) async {
-    return _taskRepo.getTaskById(taskId);
+    return _taskRepo.getTaskById(taskId).run();
   }
 }

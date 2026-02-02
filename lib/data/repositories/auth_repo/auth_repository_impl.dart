@@ -14,38 +14,41 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._prefs, this._authRemote);
 
   @override
-  Future<Either<Failure, void>> login(String email, String password) async {
-    try {
-      final response = await _authRemote.login(email, password);
-      final userModel = response;
-      final isSaved = await _prefs.saveUser(userModel);
-      return isSaved ? Right(null) : Left(Failure(message: 'Login Failure'));
-    } catch (e) {
-      return Left(Failure(message: e.toString()));
-    }
+  TaskEither<Failure, Unit> login(String email, String password) {
+    return TaskEither.Do(($) async {
+      final userModel = await $(
+        TaskEither.tryCatch(
+          () => _authRemote.login(email, password),
+          (e, _) => Failure(message: e.toString()),
+        ),
+      );
+
+      await $(
+        TaskEither.tryCatch(
+          () => _prefs.saveUser(userModel),
+          (e, _) => Failure(message: e.toString()),
+        ),
+      );
+      return unit;
+    });
   }
 
   @override
-  Future<Either<Failure, void>> register(String email, String password) async {
-    try {
-      final response = await _authRemote.register(email, password);
-      return response ? Right(null) : Left(Failure());
-    } catch (e) {
-      return Left(Failure(message: e.toString()));
-    }
+  TaskEither<Failure, Unit> register(String email, String password) {
+    return TaskEither.tryCatch(() async {
+      await _authRemote.register(email, password);
+      return unit;
+    }, (e, _) => Failure(message: e.toString()));
   }
 
   @override
-  Future<Either<Failure, User>> getUser() async {
-    try {
-      final result = _prefs.getUser();
-      if (result != null) {
-        return Right(result.toEntity());
-      } else {
-        return Left(Failure());
+  TaskEither<Failure, User> getUser() {
+    return TaskEither.tryCatch(() async {
+      final model = _prefs.getUser();
+      if (model == null) {
+        throw Exception('User not found');
       }
-    } catch (e) {
-      return Left(Failure());
-    }
+      return model.toEntity();
+    }, (e, _) => Failure(message: e.toString()));
   }
 }

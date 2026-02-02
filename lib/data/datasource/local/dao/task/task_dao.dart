@@ -1,8 +1,6 @@
 import 'package:drift/drift.dart';
-import 'package:fpdart/fpdart.dart' hide Task;
 import 'package:injectable/injectable.dart';
 import 'package:todoapp/core/database/app_database.dart';
-import 'package:todoapp/core/error/failure.dart';
 import 'package:todoapp/data/datasource/local/tables/tasks.dart';
 
 part 'task_dao.g.dart';
@@ -20,13 +18,8 @@ class TaskDao extends DatabaseAccessor<AppDatabase> with _$TaskDaoMixin {
     )..where((task) => task.id.equals(taskId))).getSingleOrNull();
   }
 
-  Future<Either<Failure, void>> upsertTask(TasksCompanion task) async {
-    try {
-      await into(tasks).insertOnConflictUpdate(task);
-      return Right(null);
-    } catch (e) {
-      return Left(Failure());
-    }
+  Future<void> upsertTask(TasksCompanion task) {
+    return into(tasks).insertOnConflictUpdate(task);
   }
 
   Future<void> upsertTasks(List<TasksCompanion> taskList) {

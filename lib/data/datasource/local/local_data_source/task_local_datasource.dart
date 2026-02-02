@@ -1,6 +1,4 @@
-import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
-import 'package:todoapp/core/error/failure.dart';
 import 'package:todoapp/data/datasource/local/dao/task/task_dao.dart';
 import 'package:todoapp/data/models/task_model.dart';
 
@@ -19,7 +17,7 @@ class TaskLocalDatasource {
     return task != null ? TaskModel.fromDrift(task) : null;
   }
 
-  Future<Either<Failure, void>> upsertTask(TaskModel taskModel) async {
+  Future<void> upsertTask(TaskModel taskModel) async {
     return _taskDao.upsertTask(taskModel.toDriftCompanion());
   }
 

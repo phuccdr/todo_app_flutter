@@ -17,14 +17,24 @@ class TaskRepositoryImpl implements TaskRepository {
   TaskRepositoryImpl(this._localDataSource, this._remoteDatasource);
 
   @override
-  Future<Either<Failure, void>> fetchTasksFromServer() async {
-    try {
-      final remoteTasks = await _remoteDatasource.getTasks();
-      await _localDataSource.insertTasks(remoteTasks);
-      return Right(null);
-    } catch (e) {
-      return Left(Failure(message: e.toString()));
-    }
+  TaskEither<Failure, Unit> fetchTasksFromServer() {
+    return TaskEither.Do(($) async {
+      final remoteTasks = await $(
+        TaskEither.tryCatch(
+          () => _remoteDatasource.getTasks(),
+          (e, _) => Failure(message: e.toString()),
+        ),
+      );
+
+      await $(
+        TaskEither.tryCatch(
+          () => _localDataSource.insertTasks(remoteTasks),
+          (e, _) => Failure(message: e.toString()),
+        ),
+      );
+
+      return unit;
+    });
   }
 
   @override
@@ -35,66 +45,78 @@ class TaskRepositoryImpl implements TaskRepository {
   }
 
   @override
-  Future<Either<Failure, void>> insertTask(Task task) async {
-    try {
+  TaskEither<Failure, Unit> insertTask(Task task) {
+    return TaskEither.Do(($) async {
       final taskId = uuid.v4();
       final taskModel = TaskModel.fromEntity(
         task.copyWith(id: taskId.toString()),
       );
-      final resultLocal = await _localDataSource.upsertTask(taskModel);
-
-      if (resultLocal.isLeft()) {
-        return resultLocal;
-      }
-
-      final resultRemote = await _remoteDatasource.insertTask(taskModel);
-      if (resultRemote.isLeft()) {
-        await _localDataSource.deleteTask(taskId);
-      }
-      return resultRemote;
-    } catch (localError) {
-      return Left(
-        Failure(
-          message: 'Failed to insert task locally: ${localError.toString()}',
+      await $(
+        TaskEither.tryCatch(
+          () => _localDataSource.upsertTask(taskModel),
+          (e, _) => Failure(message: e.toString()),
         ),
       );
-    }
+      await $(
+        TaskEither.tryCatch(
+          () => _remoteDatasource.insertTask(taskModel),
+          (e, _) => Failure(message: e.toString()),
+        ),
+      );
+      return unit;
+    });
   }
 
   @override
-  Future<Either<Failure, void>> updateTask(Task task) async {
-    try {
-      final taskModel = TaskModel.fromEntity(task);
-      await _localDataSource.upsertTask(taskModel);
-      await _remoteDatasource.updateTask(taskModel);
-      return const Right(null);
-    } catch (e) {
-      return Left(Failure(message: e.toString()));
-    }
+  TaskEither<Failure, Unit> updateTask(Task task) {
+    final taskModel = TaskModel.fromEntity(task);
+
+    return TaskEither.Do(($) async {
+      await $(
+        TaskEither.tryCatch(
+          () => _localDataSource.upsertTask(taskModel),
+          (e, _) => Failure(message: e.toString()),
+        ),
+      );
+
+      await $(
+        TaskEither.tryCatch(
+          () => _remoteDatasource.updateTask(taskModel),
+          (e, _) => Failure(message: e.toString()),
+        ),
+      );
+
+      return unit;
+    });
   }
 
   @override
-  Future<Either<Failure, void>> deleteTask(Task task) async {
-    try {
-      await _localDataSource.deleteTask(task.id);
+  TaskEither<Failure, Unit> deleteTask(Task task) {
+    return TaskEither.Do(($) async {
+      await $(
+        TaskEither.tryCatch(
+          () => _localDataSource.deleteTask(task.id),
+          (e, _) => Failure(message: e.toString()),
+        ),
+      );
       final remoteId = task.remoteId;
       if (remoteId != null) {
-        await _remoteDatasource.deleteTask(remoteId);
+        await $(
+          TaskEither.tryCatch(
+            () => _remoteDatasource.deleteTask(remoteId),
+            (e, _) => Failure(message: e.toString()),
+          ),
+        );
       }
-
-      return const Right(null);
-    } catch (e) {
-      return Left(Failure(message: e.toString()));
-    }
+      return unit;
+    });
   }
 
   @override
-  Future<Either<Failure, Task?>> getTaskById(String taskId) async {
-    try {
+  TaskEither<Failure, Task?> getTaskById(String taskId) {
+    return TaskEither.tryCatch(() async {
       final taskModel = await _localDataSource.getTaskById(taskId);
-      return Right(taskModel?.toEntity());
-    } catch (e) {
-      return Left(Failure(message: e.toString()));
-    }
+      return taskModel?.toEntity();
+    }, (e, _) => Failure(message: e.toString()));
   }
 }
