@@ -162,13 +162,19 @@ class AddTaskCubit extends Cubit<AddTaskState> {
     );
   }
 
-  Future<void> deleteTask(String taskId) async {
+  Future<void> deleteTask() async {
     emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
-    final result = await _deleteTaskUsecase.execute(taskId);
-    result.fold(
-      (_) => emit(state.copyWith(status: FormzSubmissionStatus.failure)),
-      (_) => emit(state.copyWith(status: FormzSubmissionStatus.success)),
-    );
+    final task = state.initialTask?.task;
+    if (task != null) {
+      final result = await _deleteTaskUsecase.execute(task);
+      result.fold(
+        (_) => emit(state.copyWith(status: FormzSubmissionStatus.failure)),
+        (_) => emit(state.copyWith(status: FormzSubmissionStatus.success)),
+      );
+    } else {
+      emit(state.copyWith(status: FormzSubmissionStatus.failure));
+      return;
+    }
   }
 
   void reset() async {}

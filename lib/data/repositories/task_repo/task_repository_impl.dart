@@ -74,9 +74,14 @@ class TaskRepositoryImpl implements TaskRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deleteTask(String taskId) async {
+  Future<Either<Failure, void>> deleteTask(Task task) async {
     try {
-      await _localDataSource.deleteTask(taskId);
+      await _localDataSource.deleteTask(task.id);
+      final remoteId = task.remoteId;
+      if (remoteId != null) {
+        await _remoteDatasource.deleteTask(remoteId);
+      }
+
       return const Right(null);
     } catch (e) {
       return Left(Failure(message: e.toString()));

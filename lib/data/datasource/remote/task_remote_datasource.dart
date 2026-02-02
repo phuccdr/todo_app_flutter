@@ -19,6 +19,19 @@ class TaskRemoteDatasource {
     await _dio.put('/tasks/${task.remoteId}', data: task.toJson());
   }
 
+  Future<Either<Failure, void>> deleteTask(String taskId) async {
+    try {
+      final reponse = await _dio.delete('/tasks/$taskId');
+      if (reponse.statusCode == 200) {
+        return Right(null);
+      } else {
+        return Left(Failure());
+      }
+    } catch (e) {
+      return Left(Failure());
+    }
+  }
+
   Future<Either<Failure, void>> insertTask(TaskModel task) async {
     try {
       await _dio.post('/tasks', data: task.toJson());

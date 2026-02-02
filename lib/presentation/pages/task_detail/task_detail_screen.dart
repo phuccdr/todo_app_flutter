@@ -305,8 +305,8 @@ class _TaskDetailView extends StatelessWidget {
                   context,
                   taskTitle: task?.title ?? '',
                 );
-                if (confirmed == true && context.mounted && task?.id != null) {
-                  context.read<AddTaskCubit>().deleteTask(task!.id);
+                if (confirmed == true && context.mounted) {
+                  context.read<AddTaskCubit>().deleteTask();
                 }
               },
               child: Row(

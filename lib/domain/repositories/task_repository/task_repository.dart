@@ -7,6 +7,6 @@ abstract class TaskRepository {
   Stream<Either<Failure, List<Task>>> watchTasks();
   Future<Either<Failure, void>> insertTask(Task task);
   Future<Either<Failure, void>> updateTask(Task task);
-  Future<Either<Failure, void>> deleteTask(String taskId);
+  Future<Either<Failure, void>> deleteTask(Task task);
   Future<Either<Failure, Task?>> getTaskById(String taskId);
 }
