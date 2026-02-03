@@ -85,7 +85,6 @@ class TaskRepositoryImpl implements TaskRepository {
           (e, _) => Failure(message: e.toString()),
         ),
       );
-
       return unit;
     });
   }

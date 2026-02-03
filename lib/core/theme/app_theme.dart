@@ -8,6 +8,7 @@ class AppTheme {
       useMaterial3: true,
       fontFamily: 'Lato',
       scaffoldBackgroundColor: AppColors.background,
+      brightness: Brightness.dark,
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.background,
         leadingWidth: 24,

@@ -29,20 +29,18 @@ class HomeTabView extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context, TaskListState state) {
-    if (state.status == TaskListStatus.loading ||
-        state.status == TaskListStatus.syncing) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (state.status == TaskListStatus.success && state.tasks.isEmpty) {
-      return _buildPlaceholder();
-    }
-
-    if (state.tasks.isNotEmpty) {
-      return _buildMainView(context, state);
-    }
-
-    return _buildPlaceholder();
+    return Stack(
+      children: [
+        if (state.status == TaskListStatus.success && state.tasks.isNotEmpty)
+          _buildMainView(context, state),
+        if (state.status == TaskListStatus.loading ||
+            state.status == TaskListStatus.syncing)
+          const Center(child: CircularProgressIndicator()),
+        if (state.status == TaskListStatus.initial ||
+            (state.status == TaskListStatus.success && state.tasks.isEmpty))
+          _buildPlaceholder(),
+      ],
+    );
   }
 
   Widget _buildPlaceholder() {
@@ -212,17 +210,16 @@ class _TaskItem extends StatelessWidget {
               top: (_itemHeight - _radioSize) / 2,
               width: _radioSize,
               height: _radioSize,
-              child: RadioGroup<bool>(
-                groupValue: task.isCompleted,
-                onChanged: (_) => onToggle(),
-                child: Radio<bool>(
-                  value: true,
-                  fillColor: WidgetStateProperty.resolveWith((states) {
-                    if (states.contains(WidgetState.selected)) {
-                      return AppColors.primary;
-                    }
-                    return AppColors.border;
-                  }),
+              child: SizedBox(
+                width: _radioSize,
+                height: _radioSize,
+                child: Checkbox(
+                  value: task.isCompleted,
+                  onChanged: (_) => onToggle(),
+                  shape: const CircleBorder(),
+                  side: BorderSide(color: AppColors.border, width: 2),
+                  activeColor: AppColors.primary,
+                  checkColor: Colors.white,
                 ),
               ),
             ),

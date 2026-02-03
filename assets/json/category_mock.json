@@ -15,7 +15,7 @@
     "id": "cat_003",
     "name": "Giải trí",
     "color": "#9C27B0",
-    "icon": "movie"
+    "icon": "https://storage.freeicon.com/free-location-icon-4N5z6L-5K1qM"
   },
   {
     "id": "cat_004",
@@ -39,7 +39,7 @@
     "id": "cat_007",
     "name": "Gia đình",
     "color": "#795548",
-    "icon": "https://storage.freeicon.com/free-dumbbell-icon-b_PS03cctrOr"
+    "icon": "https://storage.freeicon.com/free-location-icon-4N5z6L-5K1qM"
   },
   {
     "id": "cat_008",
@@ -51,6 +51,6 @@
     "id": "cat_009",
     "name": "Du lịch",
     "color": "#009688",
-    "icon": "https://storage.freeicon.com/free-dumbbell-icon-b_PS03cctrOr"
+    "icon": "https://storage.freeicon.com/free-location-icon-4N5z6L-5K1qM"
   }
 ]
