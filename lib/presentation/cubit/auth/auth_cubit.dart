@@ -6,8 +6,9 @@ import 'package:todoapp/presentation/cubit/auth/auth_state.dart';
 @injectable
 class AuthCubit extends Cubit<AuthState> {
   final GetUserUsecase _getUserUsecase;
-  AuthCubit(this._getUserUsecase)
-      : super(const AuthState(status: AuthStatus.unauthenticated));
+  String? deepLink;
+  AuthCubit(this._getUserUsecase, this.deepLink)
+    : super(const AuthState(status: AuthStatus.unauthenticated));
   void checkLoggedIn() async {
     emit(state.copyWith(status: AuthStatus.loading));
     final result = await _getUserUsecase.execute();
@@ -19,5 +20,17 @@ class AuthCubit extends Cubit<AuthState> {
         emit(state.copyWith(user: user, status: AuthStatus.authenticated));
       },
     );
+  }
+
+  void updatedDeepLink(String path) {
+    deepLink = path;
+  }
+
+  String? getDeepLink() {
+    return deepLink;
+  }
+
+  void clearDeepLink() {
+    deepLink = null;
   }
 }
