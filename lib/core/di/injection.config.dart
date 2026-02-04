@@ -183,9 +183,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i932.WatchTaskUsecase>(
       () => _i932.WatchTaskUsecase(gh<_i560.TaskRepository>()),
     );
-    gh.factory<_i602.AuthCubit>(
-      () => _i602.AuthCubit(gh<_i319.GetUserUsecase>()),
-    );
     gh.factory<_i619.DeleteTaskUsecase>(
       () => _i619.DeleteTaskUsecase(gh<_i560.TaskRepository>()),
     );
@@ -212,6 +209,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i45.WatchCategoriesUsecase>(),
         gh<_i421.UpdateTaskUsecase>(),
       ),
+    );
+    gh.factory<_i602.AuthCubit>(
+      () => _i602.AuthCubit(gh<_i319.GetUserUsecase>(), gh<String>()),
     );
     gh.factory<_i709.LoginCubit>(
       () => _i709.LoginCubit(gh<_i209.LoginUsecase>()),
