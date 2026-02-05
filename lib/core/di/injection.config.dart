@@ -211,7 +211,7 @@ extension GetItInjectableX on _i174.GetIt {
       ),
     );
     gh.factory<_i602.AuthCubit>(
-      () => _i602.AuthCubit(gh<_i319.GetUserUsecase>(), gh<String>()),
+      () => _i602.AuthCubit(gh<_i319.GetUserUsecase>()),
     );
     gh.factory<_i709.LoginCubit>(
       () => _i709.LoginCubit(gh<_i209.LoginUsecase>()),

@@ -31,8 +31,7 @@ class HomeTabView extends StatelessWidget {
   Widget _buildContent(BuildContext context, TaskListState state) {
     return Stack(
       children: [
-        if (state.status == TaskListStatus.success && state.tasks.isNotEmpty)
-          _buildMainView(context, state),
+        _buildMainView(context, state),
         if (state.status == TaskListStatus.loading ||
             state.status == TaskListStatus.syncing)
           const Center(child: CircularProgressIndicator()),

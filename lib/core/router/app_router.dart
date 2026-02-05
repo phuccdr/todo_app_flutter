@@ -18,6 +18,7 @@ GoRouter appRouter(AuthCubit authCubit) {
   final authListenable = AuthCubitListenable(authCubit);
 
   return GoRouter(
+    initialLocation: AppRoutes.login,
     refreshListenable: authListenable,
     redirect: (context, state) {
       final authState = authCubit.state;
